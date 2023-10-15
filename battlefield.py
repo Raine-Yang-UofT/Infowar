@@ -81,85 +81,80 @@ class Battlefield(IDisplayable):
                 grid.change_occupant(player)
                 fixed = True
 
+    def get_grid(self, row: int, col: int):
+        """
+        Return the grid at a given row and col, return none if the
+        indexes are out of bound
 
-def get_grid(self, row: int, col: int):
-    """
-    Return the grid at a given row and col, return none if the
-    indexes are out of bound
+        :param row: the row of grid
+        :param col: the col of grid
+        :return: field[row][col]
+        """
+        if row < 0 or row >= len(self.field) or col < 0 or col >= len(self.field[0]):
+            return None
 
-    :param row: the row of grid
-    :param col: the col of grid
-    :return: field[row][col]
-    """
-    if row < 0 or row >= len(self.field) or col < 0 or col >= len(self.field[0]):
-        return None
+        return self.field[row][col]
 
-    return self.field[row][col]
+    def generate_heat(self, row: int, col: int, intensity: int) -> None:
+        """
+        Generate heat signal from a given coordinate (row, col)
 
+        Preconditions:
+            - 0 <= row < len(self.field)
+            - 0 <= col < len(self.field[0])
 
-def generate_heat(self, row: int, col: int, intensity: int) -> None:
-    """
-    Generate heat signal from a given coordinate (row, col)
+        :param row: the row of the heat source
+        :param col: the col of the heat source
+        :param intensity: the intensity of the heat
+        :return: None
+        """
+        for field_row in self.field:
+            for grid in field_row:
+                x, y = grid.get_pos()
+                grid.change_heat(intensity - int(math.sqrt((row - x) ** 2 + (col - y) ** 2)))
 
-    Preconditions:
-        - 0 <= row < len(self.field)
-        - 0 <= col < len(self.field[0])
+    def generate_sound(self, row: int, col: int, intensity: int) -> None:
+        """
+        Generate sound signal from a given coordinate (row, col)
 
-    :param row: the row of the heat source
-    :param col: the col of the heat source
-    :param intensity: the intensity of the heat
-    :return: None
-    """
-    for field_row in self.field:
-        for grid in field_row:
-            x, y = grid.get_pos()
-            grid.change_heat(intensity - int(math.sqrt((row - x) ** 2 + (col - y) ** 2)))
+        Preconditions:
+            - 0 <= row < len(self.field)
+            - 0 <= col < len(self.field[0])
 
+        :param row: the row of the sound source
+        :param col: the col of the sound source
+        :param intensity: the intensity of the sound
+        :return: None
+        """
+        for field_row in self.field:
+            for grid in field_row:
+                x, y = grid.get_pos()
+                grid.change_sound(intensity - int(math.sqrt((row - x) ** 2 + (col - y) ** 2)))
 
-def generate_sound(self, row: int, col: int, intensity: int) -> None:
-    """
-    Generate sound signal from a given coordinate (row, col)
+    def reduce_sound_and_heat(self, sound_reduction: int, heat_reduction: int) -> None:
+        """
+        Reduce the sound and heat intensity in the entire field
 
-    Preconditions:
-        - 0 <= row < len(self.field)
-        - 0 <= col < len(self.field[0])
+        Preconditions:
+            - sound_reduction >= 0
+            - heat_reduction >= 0
 
-    :param row: the row of the sound source
-    :param col: the col of the sound source
-    :param intensity: the intensity of the sound
-    :return: None
-    """
-    for field_row in self.field:
-        for grid in field_row:
-            x, y = grid.get_pos()
-            grid.change_sound(intensity - int(math.sqrt((row - x) ** 2 + (col - y) ** 2)))
+        :param sound_reduction: the amount of sound reduced
+        :param heat_reduction: the amount of heat reduced
+        :return: None
+        """
+        for field_row in self.field:
+            for grid in field_row:
+                grid.change_sound(-sound_reduction)
+                grid.change_heat(-heat_reduction)
 
+    def display(self) -> list[list[str]]:
+        """
+        Override display() in IDisplayable
 
-def reduce_sound_and_heat(self, sound_reduction: int, heat_reduction: int) -> None:
-    """
-    Reduce the sound and heat intensity in the entire field
-
-    Preconditions:
-        - sound_reduction >= 0
-        - heat_reduction >= 0
-
-    :param sound_reduction: the amount of sound reduced
-    :param heat_reduction: the amount of heat reduced
-    :return: None
-    """
-    for field_row in self.field:
-        for grid in field_row:
-            grid.change_sound(-sound_reduction)
-            grid.change_heat(-heat_reduction)
-
-
-def display(self) -> list[list[str]]:
-    """
-    Override display() in IDisplayable
-
-    :return: a string representation of the battlefield
-    """
-    return [[grid.display() for grid in row] for row in self.field]
+        :return: a string representation of the battlefield
+        """
+        return [[grid.display() for grid in row] for row in self.field]
 
 
 # test method: print the battlefield information on console

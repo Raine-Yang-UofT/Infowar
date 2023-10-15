@@ -35,6 +35,10 @@ class Robot(IDisplayable, IDamageable):
 
         # position initialized by server
         self.pos = None
+        # the robot's local map
+        self.map = []
+        # the robot's information list
+        self.info_list = []
 
     def display(self) -> str:
         """
@@ -43,6 +47,15 @@ class Robot(IDisplayable, IDamageable):
         :return: 'R'
         """
         return 'R'
+
+    def display_status(self) -> str:
+        """
+        Display the status of robot in string
+
+        :return: a string containing status information
+        """
+        status_message = "Player " + str(self.player_id) + "  HP: " + str(self.HP) + '/' + str(self.max_HP) + "  armor: " + str(self.armor) + '/' + str(self.max_armor)
+        return status_message
 
     def get_id(self) -> int:
         """

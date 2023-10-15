@@ -20,6 +20,7 @@ if __name__ == '__main__':
     # receive starting message
     player = net.send(Message(message.TYPE_CONNECT, message.CONNECT, None, 0))
     print("Match found, start game...")
+    print(player.display_status())
 
     # the game loop
 

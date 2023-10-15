@@ -38,7 +38,6 @@ class Game:
         """
         self.players[player_id] = player
         self.battlefield.initialize_player_location(player)
-        print(self.battlefield.display())
         # start the game when there are enough players
         if len(self.players) == num_players:
             self.game_start = True

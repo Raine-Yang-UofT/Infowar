@@ -54,8 +54,6 @@ def threaded_client(conn, player_id: int, game_id: int):
     if pickle.loads(conn.recv(2048)).type == message.TYPE_CONNECT:
         conn.send(pickle.dumps(current_game.get_player(player_id)))
 
-    print(current_game.battlefield.display())
-
 
 while True:
     conn, addr = server_socket.accept()
