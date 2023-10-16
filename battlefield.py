@@ -4,13 +4,11 @@ The battlefield in the game, consisting a 2D list of grids
 import random
 import math
 
-from singleton_meta import SingletonMeta
 from grid import Grid
 from interface import IDisplayable
 from barricade import Barricade
 from barricade import HardBarricade
 from robot import Robot
-from robot_config import RobotConfig
 
 
 class Battlefield(IDisplayable):
@@ -23,7 +21,7 @@ class Battlefield(IDisplayable):
         :param colomns: the num of colomns in the battlefield
         """
         # create new empty grid
-        self.field = [[Grid((i, j)) for i in range(0, colomns)] for j in range(0, rows)]
+        self.field = [[Grid((j, i)) for i in range(0, rows)] for j in range(0, colomns)]
 
     def initialize_field(self, barricade_coverage: float, hard_barricade_coverage: float,
                          barricade_HP_range: tuple, barricade_armor_range: tuple) -> None:
@@ -76,9 +74,11 @@ class Battlefield(IDisplayable):
             grid = self.field[row][col]
             if grid.get_occupant() is None:  # find empty grid
                 grid.change_occupant(player)
+                player.set_pos(grid)
                 fixed = True
             elif not isinstance(grid.get_occupant(), Robot) and trail > max_trial:  # not override another player
                 grid.change_occupant(player)
+                player.set_pos(grid)
                 fixed = True
 
     def get_grid(self, row: int, col: int):
@@ -94,6 +94,38 @@ class Battlefield(IDisplayable):
             return None
 
         return self.field[row][col]
+
+    def is_blocked(self, row: int, col: int) -> bool:
+        """
+        Return whether field[row][col] is occupied by a player
+        or a hard barricade
+
+        Return True if (row, col) is out of bound
+
+        :param row: the row of the grid
+        :param col: the col of the grid
+        :return: whether the grid is blocked
+        """
+        # check out-of-bound cases
+        if self.get_grid(row, col) is None:
+            return True
+
+        return self.get_grid(row, col).display() == '#' or self.get_grid(row, col).display() == 'R'
+
+    def is_occupied(self, row: int, col: int) -> bool:
+        """
+        Return whether field[row][col] is occupied by any object
+
+        Return True if (row. col) is out of bound
+
+        :param row: the row of the grid
+        :param col: the col of the grid
+        :return: whether the grid is occupied
+        """
+        if self.get_grid(row, col) is None:
+            return True
+
+        return not self.get_grid(row, col).display() == '_'
 
     def generate_heat(self, row: int, col: int, intensity: int) -> None:
         """
@@ -157,35 +189,6 @@ class Battlefield(IDisplayable):
         return [[grid.display() for grid in row] for row in self.field]
 
 
-# test method: print the battlefield information on console
-def print_field():
-    for i in range(len(b1.field)):
-        for j in range(len(b1.field[0])):
-            print(b1.field[i][j].display(), end="  ")
-        print()  # Move to the next row
 
 
-def print_sound():
-    for i in range(len(b1.field)):
-        for j in range(len(b1.field[0])):
-            print(b1.field[i][j].get_sound(), end="  ")
-        print()  # Move to the next row
 
-
-def print_heat():
-    for i in range(len(b1.field)):
-        for j in range(len(b1.field[0])):
-            print(b1.field[i][j].get_heat(), end="  ")
-        print()  # Move to the next row
-
-
-if __name__ == '__main__':
-    b1 = Battlefield(10, 10)
-    b1.initialize_field(0.4, 0.2, (50, 200), (1, 3))
-    b1.initialize_player_location({0: Robot(RobotConfig(100, 3), 0),
-                                   1: Robot(RobotConfig(100, 4), 1),
-                                   2: Robot(RobotConfig(100, 2), 2)})
-
-    print_field()
-
-    b1.generate_sound(5, 5, 4)

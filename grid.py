@@ -21,7 +21,7 @@ class Grid:
         """
         Return the grid's position in field
 
-        :return: (x, y) of the grid's position
+        :return: (row, col) of the grid's position
         """
         return self.pos
 
@@ -97,8 +97,7 @@ class Grid:
         Show a string representation of the occupant of the grid
 
         '_': empty grid
-        'R': the player robot
-        'E': enemy robot
+        'R': robot
         '#': hard barricade
         'x': barricade
 

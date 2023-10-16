@@ -8,7 +8,7 @@ from game import Game
 import message
 from message import Message
 
-server = "100.67.81.159"  # the server's address, currently local address
+server = "100.67.87.52"  # the server's address, currently local address
 port = 5555  # the port for connection
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -53,6 +53,12 @@ def threaded_client(conn, player_id: int, game_id: int):
     # send client's robot when all players join the game
     if pickle.loads(conn.recv(2048)).type == message.TYPE_CONNECT:
         conn.send(pickle.dumps(current_game.get_player(player_id)))
+
+    # the game loop
+    while True:
+        # TODO: read client iuput
+        # TODO: pass the inputs to message center
+        pass
 
 
 while True:
