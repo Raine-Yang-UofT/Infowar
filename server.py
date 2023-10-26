@@ -3,12 +3,13 @@ from _thread import *
 import pickle
 import sys
 
+import game
 from robot import Robot
 from game import Game
 import message
 from message import Message
 
-server = "100.67.87.52"  # the server's address, currently local address
+server = "100.67.91.41"  # the server's address, currently local address
 port = 5555  # the port for connection
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -43,7 +44,7 @@ def threaded_client(conn, player_id: int, game_id: int):
     # receive robot configuration
     config = pickle.loads(conn.recv(2048 * 4))
     player = Robot(config, player_id)
-    current_game.add_player(player, player_id, NUM_PLAYERS)  # add player to field
+    current_game.add_player(player, player_id)  # add player to field
     conn.send(pickle.dumps(player))
 
     # wait for all players to connect
@@ -56,9 +57,22 @@ def threaded_client(conn, player_id: int, game_id: int):
 
     # the game loop
     while True:
-        # TODO: read client iuput
-        # TODO: pass the inputs to message center
-        pass
+        try:
+            client_message = pickle.loads(conn.recv(2048 * 4))  # read client command
+            current_game.message_center.receive_message(client_message)  # add message to message center
+            print("receive client message")
+
+            # wait until every player made their moves
+            while not current_game.message_center.complete_round:
+                pass
+
+            # send client results
+            print("finish processing commands, updating robot statuses to clients")
+            conn.send(pickle.dumps(current_game.get_player(player_id)))
+
+        except Exception as exception:  # cannot receive client message
+            print(exception)
+            break
 
 
 while True:
@@ -69,7 +83,7 @@ while True:
     game_id = (id_count - 1) // NUM_PLAYERS   # match players to a game
     player_id = 1   # the id of each player, from 1 to num_players
     if id_count % NUM_PLAYERS == 1:  # start a new game
-        games[game_id] = Game(game_id)  # create new game
+        games[game_id] = Game(game_id, NUM_PLAYERS)  # create new game
         print("Creating a new game...")
     else:   # join the player in an existing game
         player_id = id_count % NUM_PLAYERS

@@ -18,13 +18,15 @@ BARRICADE_ARMOR_RANGE = (1, 3)
 
 class Game:
 
-    def __init__(self, game_id: int) -> None:
+    def __init__(self, game_id: int, num_players: int) -> None:
         """
         Initialize a game with players and a battlefield
 
         :param game_id: the game_id assigned by server
+        :param num_players: the number of players to start a game
         """
         self.game_id = game_id
+        self.num_players = num_players
         self.battlefield = Battlefield(FIELD_ROW, FIELD_ROW)
         self.battlefield.initialize_field(BARRICADE_COVERAGE, HARD_BARRICADE_COVERAGE, BARRICADE_HP_RANGE,
                                           BARRICADE_ARMOR_RANGE)
@@ -35,19 +37,18 @@ class Game:
         self.message_center = MessageCenter(self)
         self.move_controller = MoveController(self)
 
-    def add_player(self, player: Robot, player_id: int, num_players: int) -> None:
+    def add_player(self, player: Robot, player_id: int) -> None:
         """
         Add a new player to the game field
 
         :param player: the player in the game
         :param player_id: the id of player
-        :param num_players: the number of players to start a game
         :return: None
         """
         self.players[player_id] = player
         self.battlefield.initialize_player_location(player)
         # start the game when there are enough players
-        if len(self.players) == num_players:
+        if len(self.players) == self.num_players:
             self.game_start = True
 
     def get_player(self, player_id: int) -> Robot:
@@ -77,6 +78,10 @@ class MessageCenter:
         self.message_queue = PriorityQueue()
         self.game = game
 
+        self.num_players = game.num_players
+        self.num_players_went = 0   # the number of players who made their moves
+        self.complete_round = False    # whether all player moves have been executed
+
     def receive_message(self, player_message: Message) -> None:
         """
         receive a message from server and put it in the message queue
@@ -84,7 +89,11 @@ class MessageCenter:
         :param player_message: the player message to receive
         :return: None
         """
+        self.complete_round = False
         self.message_queue.put((player_message.priority, player_message))
+        self.num_players_went += 1  # add one player who makes its move
+        if self.num_players_went == self.num_players:   # execute messages when all players made action
+            self.execute_commands()
 
     def execute_commands(self) -> None:
         """
@@ -93,14 +102,19 @@ class MessageCenter:
 
         :return: None
         """
+        self.num_players_went = 0   # reset player movement count
+
         while not self.message_queue.empty():
             player_message = self.message_queue.get()[1]
             # distribute the message to corresponding controllers
             if player_message.type == message.TYPE_MOVE:
                 # send move message to MoveController
                 self.game.move_controller.receive_message(player_message)
+            # TODO Handle more message types
             else:
                 print("Unidentified Message Type!")
+
+        self.complete_round = True  # all player commands have been processed, time to send message to clients
 
 
 class MoveController:

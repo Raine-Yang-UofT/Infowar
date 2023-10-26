@@ -21,6 +21,15 @@ class Message:
     data: Any
     priority: int
 
+    def __lt__(self, other):
+        """
+        Override the comparison between messages
+
+        :param other: another Message instance
+        :return: whether this message has a higher priority
+        """
+        return self.priority < other.priority
+
 
 """
 Defining Directions
