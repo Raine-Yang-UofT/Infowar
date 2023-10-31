@@ -13,15 +13,22 @@ from robot import Robot
 
 class Battlefield(IDisplayable):
 
-    def __init__(self, rows: int, colomns: int) -> None:
+    def __init__(self, rows: int, columns: int) -> None:
         """
         Create a new empty 2D list consisting of empty Grid
 
         :param rows: the num of rows in the battlefield
-        :param colomns: the num of colomns in the battlefield
+        :param columns: the num of colomns in the battlefield
         """
         # create new empty grid
-        self.field = [[Grid((j, i)) for i in range(0, rows)] for j in range(0, colomns)]
+        self.field = [[Grid((j, i)) for j in range(0, columns)] for i in range(0, rows)]
+        '''
+        for i in range(0, rows):
+            row = []
+            for j in range(0, columns):
+                row.append(Grid((j, i)))
+            self.field.append(row)
+        '''
 
     def initialize_field(self, barricade_coverage: float, hard_barricade_coverage: float,
                          barricade_HP_range: tuple, barricade_armor_range: tuple) -> None:
@@ -81,51 +88,51 @@ class Battlefield(IDisplayable):
                 player.set_pos(grid)
                 fixed = True
 
-    def get_grid(self, row: int, col: int):
+    def get_grid(self, x: int, y: int):
         """
         Return the grid at a given row and col, return none if the
         indexes are out of bound
 
-        :param row: the row of grid
-        :param col: the col of grid
-        :return: field[row][col]
+        :param x: the x-coordinate of grid
+        :param y: the y-ccordinate of grid
+        :return: field[y][x]
         """
-        if row < 0 or row >= len(self.field) or col < 0 or col >= len(self.field[0]):
+        if y < 0 or y >= len(self.field) or x < 0 or x >= len(self.field[0]):
             return None
 
-        return self.field[row][col]
+        return self.field[y][x]
 
-    def is_blocked(self, row: int, col: int) -> bool:
+    def is_blocked(self, x: int, y: int) -> bool:
         """
         Return whether field[row][col] is occupied by a player
         or a hard barricade
 
-        Return True if (row, col) is out of bound
+        Return True if (x, y) is out of bound
 
-        :param row: the row of the grid
-        :param col: the col of the grid
+        :param x: the x-coordinate of grid
+        :param y: the y-ccordinate of grid
         :return: whether the grid is blocked
         """
         # check out-of-bound cases
-        if self.get_grid(row, col) is None:
+        if self.get_grid(x, y) is None:
             return True
 
-        return self.get_grid(row, col).display() == '#' or self.get_grid(row, col).display() == 'R'
+        return self.get_grid(x, y).display() == '#' or self.get_grid(x, y).display() == 'R'
 
-    def is_occupied(self, row: int, col: int) -> bool:
+    def is_occupied(self, x: int, y: int) -> bool:
         """
         Return whether field[row][col] is occupied by any object
 
-        Return True if (row. col) is out of bound
+        Return True if (x. y) is out of bound
 
-        :param row: the row of the grid
-        :param col: the col of the grid
+        :param x: the x-coordinate of grid
+        :param y: the y-ccordinate of grid
         :return: whether the grid is occupied
         """
-        if self.get_grid(row, col) is None:
+        if self.get_grid(x, y) is None:
             return True
 
-        return not self.get_grid(row, col).display() == '_'
+        return not self.get_grid(x, y).display() == '_'
 
     def generate_heat(self, row: int, col: int, intensity: int) -> None:
         """
@@ -188,7 +195,23 @@ class Battlefield(IDisplayable):
         """
         return [[grid.display() for grid in row] for row in self.field]
 
+    def display_player_vision(self, x: int, y: int) -> list[list[str]]:
+        """
+        Display the 3 * 3 region of the grid in player's vision, the rest of
+        the grids are displayed as empty space
 
+        :param x: the x-ccordinate of player
+        :param y: the y-coordinate of player
+        :return: a string representation of player's vision at the location
+        """
+        result = []
+        for i in range(0, len(self.field)):
+            row = []
+            for j in range(0, len(self.field[0])):
+                if y - 1 <= i <= y + 1 and x - 1 <= j <= x + 1:
+                    row.append(self.get_grid(j, i).display())
+                else:
+                    row.append(" ")
+            result.append(row)
 
-
-
+        return result

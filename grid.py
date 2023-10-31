@@ -21,7 +21,7 @@ class Grid:
         """
         Return the grid's position in field
 
-        :return: (row, col) of the grid's position
+        :return: (x, y) of the grid's position
         """
         return self.pos
 

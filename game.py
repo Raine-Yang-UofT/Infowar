@@ -6,14 +6,7 @@ from robot import Robot
 import message
 from message import Message
 from queue import PriorityQueue
-
-# Game Configurations
-FIELD_ROW = 15
-FIELD_COL = 15
-BARRICADE_COVERAGE = 0.4
-HARD_BARRICADE_COVERAGE = 0.2
-BARRICADE_HP_RANGE = (50, 200)
-BARRICADE_ARMOR_RANGE = (1, 3)
+import game_config
 
 
 class Game:
@@ -27,11 +20,12 @@ class Game:
         """
         self.game_id = game_id
         self.num_players = num_players
-        self.battlefield = Battlefield(FIELD_ROW, FIELD_ROW)
-        self.battlefield.initialize_field(BARRICADE_COVERAGE, HARD_BARRICADE_COVERAGE, BARRICADE_HP_RANGE,
-                                          BARRICADE_ARMOR_RANGE)
+        self.battlefield = Battlefield(game_config.FIELD_ROW, game_config.FIELD_COL)
+        self.battlefield.initialize_field(game_config.BARRICADE_COVERAGE, game_config.HARD_BARRICADE_COVERAGE, game_config.BARRICADE_HP_RANGE,
+                                          game_config.BARRICADE_ARMOR_RANGE)
         self.players = {}  # the dict of all players
         self.game_start = False  # whether the game as started
+        self.game_update_counter = 0  # how many threads finish the round
 
         # initialize message centers and controllers
         self.message_center = MessageCenter(self)
@@ -62,6 +56,71 @@ class Game:
         :return: the Robot object corresponding to player_id
         """
         return self.players[player_id]
+
+    def update_game(self) -> None:
+        """
+        Update game after each round
+
+        Reduce sound and heat intensity
+        Reset robot info_list
+
+        :return: None
+        """
+        self.battlefield.reduce_sound_and_heat(game_config.SOUND_REDUCTION, game_config.HEAT_REDUCTION)
+
+        for player_id in self.players:
+            # clear information list
+            self.players[player_id].clear_info()
+
+        print_field(self.battlefield)   # test method: print field
+        print('---')
+        print_sound(self.battlefield)
+        print('---')
+        print_heat(self.battlefield)
+
+    def reset_game_update(self) -> None:
+        """
+        Notify that one thread has finished sending client message,
+        Reset self.game_update to False when all threads finish
+
+        :return: None
+        """
+        self.game_update_counter += 1
+        if self.game_update_counter == self.num_players:
+            self.update_game()
+            self.game_update_counter = 0  # reset counter
+
+    def update_player_map(self, robot) -> None:
+        """
+        Update the map of a robot
+
+        :param robot: the robot to update
+        :return: None
+        """
+        x, y = robot.get_pos()
+        robot.update_map(self.battlefield.display_player_vision(x, y))
+
+
+# test methods: print battlefield status to terminal
+def print_field(b):
+    for i in range(len(b.field)):
+        for j in range(len(b.field[0])):
+            print(b.field[i][j].display(), end="  ")
+        print()  # Move to the next row
+
+
+def print_sound(b):
+    for i in range(len(b.field)):
+        for j in range(len(b.field[0])):
+            print(b.field[i][j].get_sound(), end="  ")
+        print()  # Move to the next row
+
+
+def print_heat(b):
+    for i in range(len(b.field)):
+        for j in range(len(b.field[0])):
+            print(b.field[i][j].get_heat(), end="  ")
+        print()  # Move to the next row
 
 
 class MessageCenter:
@@ -148,13 +207,13 @@ class MoveController:
         x, y = robot.get_pos()  # the player's current location
 
         if direction == message.UP:
-            self.move_player(robot, (x - 1, y))
-        elif direction == message.DOWN:
-            self.move_player(robot, (x + 1, y))
-        elif direction == message.LEFT:
             self.move_player(robot, (x, y - 1))
-        elif direction == message.RIGHT:
+        elif direction == message.DOWN:
             self.move_player(robot, (x, y + 1))
+        elif direction == message.LEFT:
+            self.move_player(robot, (x - 1, y))
+        elif direction == message.RIGHT:
+            self.move_player(robot, (x + 1, y))
 
     def move_player(self, robot, target_pos: tuple) -> None:
         """

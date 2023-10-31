@@ -28,25 +28,37 @@ def print_heat(b):
         print()  # Move to the next row
 
 
+def print_list(b):
+    for i in range(len(b)):
+        for j in range(len(b[0])):
+            print(b[i][j], end="  ")
+        print()
+
+
 if __name__ == '__main__':
-    game = Game(0)
+    game = Game(0, 3)
     player0 = Robot(RobotConfig(default_base), 0)
     player1 = Robot(RobotConfig(default_base), 1)
     player2 = Robot(RobotConfig(default_base), 2)
 
-    game.add_player(player0, 0, 3)
-    game.add_player(player1, 1, 3)
-    game.add_player(player2, 2, 3)
+    game.add_player(player0, 0)
+    game.add_player(player1, 1)
+    game.add_player(player2, 2)
 
     print_field(game.battlefield)
     print()
 
+    print_list(game.battlefield.display_player_vision(player0.get_pos()[0], player0.get_pos()[1]))
+    player0.update_map(game.battlefield.display_player_vision(player0.get_pos()[0], player0.get_pos()[1]))
     message_center = MessageCenter(game)
-    message_center.receive_message(Message(0, message.TYPE_MOVE, message.MOVE, message.UP, 0))
+    message_center.receive_message(Message(0, message.TYPE_MOVE, message.MOVE, message.RIGHT, 0))
     message_center.execute_commands()
     print_field(game.battlefield)
+    print_list(game.battlefield.display_player_vision(player0.get_pos()[0], player0.get_pos()[1]))
+    player0.update_map(game.battlefield.display_player_vision(player0.get_pos()[0], player0.get_pos()[1]))
     player0.print_info()
-
+    print_list(player0.map)
     print_sound(game.battlefield)
+
 
 

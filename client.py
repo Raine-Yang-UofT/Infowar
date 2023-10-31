@@ -54,7 +54,7 @@ if __name__ == '__main__':
     move_speed = 50
     # TODO assign the veriables about by configuration
 
-    net = Network("100.67.91.41")
+    net = Network("100.67.82.133")
     net.connect(RobotConfig(default_base))
     player = net.get_player()   # receive the initialized player robot
     print("You are player " + str(player.get_id()))
@@ -69,13 +69,14 @@ if __name__ == '__main__':
     # the game loop
     while True:
         # TODO: read user input from command line
-        # TODO: send command to server
         round_count += 1
         # print robot status and information
         print(player.display_status())
         player.print_info()
+        print("Map: ")
+        player.print_map()
 
-        print("Round" + str(round_count) + "  Please select your move:")
+        print("Round " + str(round_count) + "  Please select your move:")
 
         # get player input
         valid_command = False
@@ -88,3 +89,5 @@ if __name__ == '__main__':
                     valid_command = True    # successfully received server response
             else:
                 print("Invalid Command")
+
+        print('-' * 30)

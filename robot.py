@@ -4,6 +4,7 @@ The class for a player-controlled robot
 from interface import IDisplayable, IDamageable
 from robot_config import RobotConfig, BaseConfig, SensorConfig, WeaponConfig, GadgetConfig
 from grid import Grid
+from game_config import FIELD_ROW, FIELD_COL
 
 
 class Robot(IDisplayable, IDamageable):
@@ -40,10 +41,10 @@ class Robot(IDisplayable, IDamageable):
 
         # position initialized by server
         self.grid = None
-        # the robot's local map
-        self.map = []
         # the robot's information list
         self.info_list = []
+        # the robot's local map
+        self.map = [[" " for _ in range(0, FIELD_COL)] for _ in range(0, FIELD_ROW)]
 
     def display(self) -> str:
         """
@@ -104,11 +105,39 @@ class Robot(IDisplayable, IDamageable):
     def print_info(self) -> None:
         """
         Print all information gathered from self.info_list to console
-        and clear the list
 
         :return: None
         """
         for info in self.info_list:
             print(info)
 
+    def clear_info(self) -> None:
+        """
+        Clear the list self.info_list
+
+        :return: None
+        """
         self.info_list.clear()
+
+    def update_map(self, vision: list[list[str]]) -> None:
+        """
+        Update the player's local map
+
+        :param vision: the field of vision obtained by player
+        :return: None
+        """
+        for i in range(0, len(vision)):
+            for j in range(0, len(vision[0])):
+                if self.map[i][j] != vision[i][j] and vision[i][j] != ' ':
+                    self.map[i][j] = vision[i][j]
+
+    def print_map(self) -> None:
+        """
+        Print the local map to console
+
+        :return: None
+        """
+        for i in range(len(self.map)):
+            for j in range(len(self.map[0])):
+                print(self.map[i][j], end="  ")
+            print()

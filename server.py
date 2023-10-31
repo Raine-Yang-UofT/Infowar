@@ -9,7 +9,7 @@ from game import Game
 import message
 from message import Message
 
-server = "100.67.91.41"  # the server's address, currently local address
+server = "100.67.82.133"  # the server's address, currently local address
 port = 5555  # the port for connection
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -58,6 +58,7 @@ def threaded_client(conn, player_id: int, game_id: int):
     # the game loop
     while True:
         try:
+            # receive client message
             client_message = pickle.loads(conn.recv(2048 * 4))  # read client command
             current_game.message_center.receive_message(client_message)  # add message to message center
             print("receive client message")
@@ -66,10 +67,13 @@ def threaded_client(conn, player_id: int, game_id: int):
             while not current_game.message_center.complete_round:
                 pass
 
-            # send client results
-            print("finish processing commands, updating robot statuses to clients")
+            # send client status
+            print("finish processing commands, send client status")
+            current_game.update_player_map(current_game.get_player(player_id))  # update the robot local map
             conn.send(pickle.dumps(current_game.get_player(player_id)))
 
+            # update game
+            current_game.reset_game_update()
         except Exception as exception:  # cannot receive client message
             print(exception)
             break
