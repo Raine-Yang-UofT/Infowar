@@ -34,11 +34,7 @@ class Grid:
         """
         final_heat = self.heat + value
         # constrain heat between 0 and 9
-        if final_heat > 9:
-            final_heat = 9
-        if final_heat < 0:
-            final_heat = 0
-        self.heat = final_heat
+        self.heat = max(min(final_heat, 9), 0)
 
     def change_sound(self, value: int) -> None:
         """
@@ -49,11 +45,7 @@ class Grid:
         """
         final_sound = self.sound + value
         # constrain heat between 0 and 9
-        if final_sound > 9:
-            final_sound = 9
-        if final_sound < 0:
-            final_sound = 0
-        self.sound = final_sound
+        self.sound = max(min(final_sound, 9), 0)
 
     def change_occupant(self, occupant: interface.IDisplayable) -> None:
         """

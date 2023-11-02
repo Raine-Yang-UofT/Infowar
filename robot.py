@@ -2,9 +2,21 @@
 The class for a player-controlled robot
 """
 from interface import IDisplayable, IDamageable
-from robot_config import RobotConfig, BaseConfig, SensorConfig, WeaponConfig, GadgetConfig
+from Configurations.robot_config import RobotConfig
 from grid import Grid
-from game_config import FIELD_ROW, FIELD_COL
+from Configurations.game_config import FIELD_ROW, FIELD_COL
+
+
+def print_list_helper(lst: list[list]) -> None:
+    """
+    Helper function, print a 2D list
+
+    :return: None
+    """
+    for i in range(len(lst)):
+        for j in range(len(lst[0])):
+            print(lst[i][j], end="  ")
+        print()
 
 
 class Robot(IDisplayable, IDamageable):
@@ -45,6 +57,8 @@ class Robot(IDisplayable, IDamageable):
         self.info_list = []
         # the robot's local map
         self.map = [[" " for _ in range(0, FIELD_COL)] for _ in range(0, FIELD_ROW)]
+        # the robot's current vision
+        self.vision = []
 
     def display(self) -> str:
         """
@@ -121,15 +135,35 @@ class Robot(IDisplayable, IDamageable):
 
     def update_map(self, vision: list[list[str]]) -> None:
         """
-        Update the player's local map
+        Update the player's local map and vision
 
         :param vision: the field of vision obtained by player
         :return: None
         """
+        # update local map
         for i in range(0, len(vision)):
             for j in range(0, len(vision[0])):
                 if self.map[i][j] != vision[i][j] and vision[i][j] != ' ':
                     self.map[i][j] = vision[i][j]
+
+        # update robot vision
+        x, y = self.grid.get_pos()
+        for i in range(y - 1, y + 2):
+            row = []
+            for j in range(x - 1, x + 2):
+                if i < 0 or i > len(vision) or j < 0 or j > len(vision):
+                    row.append('*')
+                else:
+                    row.append(vision[i][j])
+            self.vision.append(row)
+
+    def print_vision(self) -> None:
+        """
+        Print vision to console
+
+        :return: None
+        """
+        print_list_helper(self.vision)
 
     def print_map(self) -> None:
         """
@@ -137,7 +171,4 @@ class Robot(IDisplayable, IDamageable):
 
         :return: None
         """
-        for i in range(len(self.map)):
-            for j in range(len(self.map[0])):
-                print(self.map[i][j], end="  ")
-            print()
+        print_list_helper(self.map)

@@ -3,10 +3,10 @@ The class of a gameplay
 """
 from battlefield import Battlefield
 from robot import Robot
-import message
-from message import Message
+from Framework import message
+from Framework.message import Message
 from queue import PriorityQueue
-import game_config
+from Configurations import game_config
 
 
 class Game:
@@ -63,6 +63,7 @@ class Game:
 
         Reduce sound and heat intensity
         Reset robot info_list
+        Reset robot vision
 
         :return: None
         """
@@ -71,6 +72,7 @@ class Game:
         for player_id in self.players:
             # clear information list
             self.players[player_id].clear_info()
+            self.players[player_id].vision = []
 
         print_field(self.battlefield)   # test method: print field
         print('---')
@@ -173,6 +175,7 @@ class MessageCenter:
             else:
                 print("Unidentified Message Type!")
 
+        print('complete round')
         self.complete_round = True  # all player commands have been processed, time to send message to clients
 
 

@@ -1,9 +1,8 @@
-from battlefield import Battlefield
-from game import Game, MessageCenter, MoveController
+from game import Game, MessageCenter
 from robot import Robot
-from robot_config import RobotConfig, default_base
-import message
-from message import Message
+from Configurations.robot_config import RobotConfig, default_base
+from Framework import message
+from Framework.message import Message
 
 
 # test method: print the battlefield information on console

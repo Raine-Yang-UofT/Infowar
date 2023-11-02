@@ -22,13 +22,6 @@ class Battlefield(IDisplayable):
         """
         # create new empty grid
         self.field = [[Grid((j, i)) for j in range(0, columns)] for i in range(0, rows)]
-        '''
-        for i in range(0, rows):
-            row = []
-            for j in range(0, columns):
-                row.append(Grid((j, i)))
-            self.field.append(row)
-        '''
 
     def initialize_field(self, barricade_coverage: float, hard_barricade_coverage: float,
                          barricade_HP_range: tuple, barricade_armor_range: tuple) -> None:
@@ -134,41 +127,41 @@ class Battlefield(IDisplayable):
 
         return not self.get_grid(x, y).display() == '_'
 
-    def generate_heat(self, row: int, col: int, intensity: int) -> None:
+    def generate_heat(self, x: int, y: int, intensity: int) -> None:
         """
-        Generate heat signal from a given coordinate (row, col)
+        Generate heat signal from a given coordinate (x, y)
 
         Preconditions:
-            - 0 <= row < len(self.field)
-            - 0 <= col < len(self.field[0])
+            - 0 <= x < len(self.field[0])
+            - 0 <= y < len(self.field)
 
-        :param row: the row of the heat source
-        :param col: the col of the heat source
+        :param x: the x-coordinate of the heat source
+        :param y: the y-coordinate of the heat source
         :param intensity: the intensity of the heat
         :return: None
         """
         for field_row in self.field:
             for grid in field_row:
-                x, y = grid.get_pos()
-                grid.change_heat(intensity - int(math.sqrt((row - x) ** 2 + (col - y) ** 2)))
+                px, py = grid.get_pos()
+                grid.change_heat(max(intensity - int(math.sqrt((x - px) ** 2 + (y - py) ** 2)), 0))
 
-    def generate_sound(self, row: int, col: int, intensity: int) -> None:
+    def generate_sound(self, x: int, y: int, intensity: int) -> None:
         """
-        Generate sound signal from a given coordinate (row, col)
+        Generate sound signal from a given coordinate (x, y)
 
         Preconditions:
-            - 0 <= row < len(self.field)
-            - 0 <= col < len(self.field[0])
+            - 0 <= x < len(self.field[0])
+            - 0 <= y < len(self.field)
 
-        :param row: the row of the sound source
-        :param col: the col of the sound source
+        :param x: the x-coordinate of the sound source
+        :param y: the y-coordinate of the sound source
         :param intensity: the intensity of the sound
         :return: None
         """
         for field_row in self.field:
             for grid in field_row:
-                x, y = grid.get_pos()
-                grid.change_sound(intensity - int(math.sqrt((row - x) ** 2 + (col - y) ** 2)))
+                px, py = grid.get_pos()
+                grid.change_sound(max(intensity - int(math.sqrt((x - px) ** 2 + (y - py) ** 2)), 0))
 
     def reduce_sound_and_heat(self, sound_reduction: int, heat_reduction: int) -> None:
         """
@@ -215,3 +208,15 @@ class Battlefield(IDisplayable):
             result.append(row)
 
         return result
+
+    def display_signal_vision(self, x: int, y: int, signal_type: int, radius: int) -> list[list[int]]:
+        """
+        Show the sound/heat signal centered at (x, y) at a given radius
+
+        :param x: the x-coordinate of detection point
+        :param y: the y-coordinate of detection point
+        :param signal_type: the type of signal (sound/heat)
+        :param radius: the radius of signal (square region)
+        :return: the signal to display
+        """
+
