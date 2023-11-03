@@ -3,6 +3,7 @@ from robot import Robot
 from Configurations.robot_config import RobotConfig, default_base
 from Framework import message
 from Framework.message import Message
+from robot_sensors import RobotSensor
 
 
 # test method: print the battlefield information on console
@@ -28,9 +29,9 @@ def print_heat(b):
 
 
 def print_list(b):
-    for i in range(len(b)):
-        for j in range(len(b[0])):
-            print(b[i][j], end="  ")
+    for row in b:
+        for element in row:
+            print(element, end="  ")
         print()
 
 
@@ -47,17 +48,13 @@ if __name__ == '__main__':
     print_field(game.battlefield)
     print()
 
-    print_list(game.battlefield.display_player_vision(player0.get_pos()[0], player0.get_pos()[1]))
-    player0.update_map(game.battlefield.display_player_vision(player0.get_pos()[0], player0.get_pos()[1]))
+    print_list(game.sensors.display_player_vision(player0.get_pos()[0], player0.get_pos()[1]))
+    player0.update_map(game.sensors.display_player_vision(player0.get_pos()[0], player0.get_pos()[1]))
     message_center = MessageCenter(game)
     message_center.receive_message(Message(0, message.TYPE_MOVE, message.MOVE, message.RIGHT, 0))
     message_center.execute_commands()
     print_field(game.battlefield)
-    print_list(game.battlefield.display_player_vision(player0.get_pos()[0], player0.get_pos()[1]))
-    player0.update_map(game.battlefield.display_player_vision(player0.get_pos()[0], player0.get_pos()[1]))
-    player0.print_info()
-    print_list(player0.map)
-    print_sound(game.battlefield)
-
+    print_list(game.sensors.display_signal_vision(player0.get_pos()[0], player0.get_pos()[1], 'sound', 5))
+    print_list(game.sensors.display_signal_vision(player0.get_pos()[0], player0.get_pos()[1], 'heat', 5))
 
 

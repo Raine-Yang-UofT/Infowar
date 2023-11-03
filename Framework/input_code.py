@@ -16,3 +16,6 @@ UP = 'w'
 LEFT = 'a'
 DOWN = 's'
 RIGHT = 'd'
+
+# input sensor names
+

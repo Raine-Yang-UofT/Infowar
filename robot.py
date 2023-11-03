@@ -13,9 +13,9 @@ def print_list_helper(lst: list[list]) -> None:
 
     :return: None
     """
-    for i in range(len(lst)):
-        for j in range(len(lst[0])):
-            print(lst[i][j], end="  ")
+    for row in lst:
+        for element in row:
+            print(element, end="  ")
         print()
 
 
@@ -28,17 +28,14 @@ class Robot(IDisplayable, IDamageable):
         :param robot_config: config file for robot
         :param player_id: the id assigned by server
         """
-        # extract configurations from RobotConfig
-        base = robot_config.base
-
         # the id assigned to player and game
         self.player_id = player_id
 
         # extract base configuration
-        self.max_HP = base.HP
-        self.max_armor = base.armor
-        self.move_sound = base.move_sound
-        self.move_heat = base.move_heat
+        self.max_HP = robot_config.HP
+        self.max_armor = robot_config.armor
+        self.move_sound = robot_config.move_sound
+        self.move_heat = robot_config.move_heat
 
         # the robot current status: initialize as max values
         self.HP = self.max_HP
@@ -145,13 +142,16 @@ class Robot(IDisplayable, IDamageable):
             for j in range(0, len(vision[0])):
                 if self.map[i][j] != vision[i][j] and vision[i][j] != ' ':
                     self.map[i][j] = vision[i][j]
+                    # hide enemy robots
+                    if vision[i][j] == 'R' and (j, i) != self.grid.get_pos():
+                        self.map[i][j] = '_'
 
         # update robot vision
         x, y = self.grid.get_pos()
         for i in range(y - 1, y + 2):
             row = []
             for j in range(x - 1, x + 2):
-                if i < 0 or i > len(vision) or j < 0 or j > len(vision):
+                if i < 0 or i >= len(vision) or j < 0 or j >= len(vision):
                     row.append('*')
                 else:
                     row.append(vision[i][j])

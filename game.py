@@ -7,6 +7,7 @@ from Framework import message
 from Framework.message import Message
 from queue import PriorityQueue
 from Configurations import game_config
+from robot_sensors import RobotSensor
 
 
 class Game:
@@ -21,6 +22,7 @@ class Game:
         self.game_id = game_id
         self.num_players = num_players
         self.battlefield = Battlefield(game_config.FIELD_ROW, game_config.FIELD_COL)
+        self.sensors = RobotSensor(self.battlefield)
         self.battlefield.initialize_field(game_config.BARRICADE_COVERAGE, game_config.HARD_BARRICADE_COVERAGE, game_config.BARRICADE_HP_RANGE,
                                           game_config.BARRICADE_ARMOR_RANGE)
         self.players = {}  # the dict of all players
@@ -100,7 +102,7 @@ class Game:
         :return: None
         """
         x, y = robot.get_pos()
-        robot.update_map(self.battlefield.display_player_vision(x, y))
+        robot.update_map(self.sensors.display_player_vision(x, y))
 
 
 # test methods: print battlefield status to terminal

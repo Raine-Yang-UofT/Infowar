@@ -3,7 +3,7 @@ The client end for communication
 """
 
 from network import Network
-from Configurations.robot_config import RobotConfig, default_base
+from Configurations.robot_config import default_config, RobotConfig
 import message
 from message import Message
 import input_code
@@ -28,6 +28,17 @@ def select_move_command(net: Network):
     # send message
     direction = get_direction_message(command_input)
     return net.send(Message(net.get_player().get_id(), message.TYPE_MOVE, message.MOVE, direction, move_speed))
+
+
+def select_sense_command(net: Network):
+    """
+    Prompt the player to send sense command
+
+    :param net: the network connection to server
+    :return: the robot object received from server
+    """
+    print("Select the sensor")
+    command_input = input()
 
 
 def get_direction_message(command_input: str) -> int:
@@ -55,8 +66,8 @@ if __name__ == '__main__':
     move_speed = 50
     # TODO assign the veriables about by configuration
 
-    net = Network("100.71.89.172")
-    net.connect(RobotConfig(default_base))
+    net = Network("100.67.93.154")
+    net.connect(default_config)
     player = net.get_player()   # receive the initialized player robot
     print("You are player " + str(player.get_id()))
     print("Waiting for other players...")
@@ -69,7 +80,6 @@ if __name__ == '__main__':
 
     # the game loop
     while True:
-        # TODO: read user input from command line
         round_count += 1
         # print robot status and information
         print(player.display_status())
@@ -90,6 +100,8 @@ if __name__ == '__main__':
                 player = select_move_command(net)
                 if player is not None:
                     valid_command = True    # successfully received server response
+            elif command_type == input_code.SENSE:  # receive sensor command
+
             else:
                 print("Invalid Command")
 

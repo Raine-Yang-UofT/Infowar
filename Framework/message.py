@@ -13,7 +13,7 @@ class Message:
         command: the specific command player sends
         data: any data in the message (if required)
         priority: the order of message in message queue,
-                  lower value for higher priority
+                  higher value for higher priority
     """
     source: int
     type: int
@@ -28,7 +28,7 @@ class Message:
         :param other: another Message instance
         :return: whether this message has a higher priority
         """
-        return self.priority < other.priority
+        return self.priority > other.priority
 
 
 """
