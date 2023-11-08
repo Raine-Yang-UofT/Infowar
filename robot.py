@@ -36,6 +36,7 @@ class Robot(IDisplayable, IDamageable):
         self.max_armor = robot_config.armor
         self.move_sound = robot_config.move_sound
         self.move_heat = robot_config.move_heat
+        self.move_speed = robot_config.move_speed
 
         # the robot current status: initialize as max values
         self.HP = self.max_HP

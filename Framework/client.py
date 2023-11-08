@@ -27,7 +27,7 @@ def select_move_command(net: Network):
 
     # send message
     direction = get_direction_message(command_input)
-    return net.send(Message(net.get_player().get_id(), message.TYPE_MOVE, message.MOVE, direction, move_speed))
+    return net.send(Message(net.get_player().get_id(), message.TYPE_MOVE, message.MOVE, direction, player.move_speed))
 
 
 def select_sense_command(net: Network):
@@ -38,8 +38,18 @@ def select_sense_command(net: Network):
     :return: the robot object received from server
     """
     print("Select the sensor")
-    command_input = input()
+    prompt = ''
+    for i in range(0, len(player.sensors)):
+        prompt += str(i + 1) + ": " + player.sensors[i].name + "  "
+    try:
+        index = int(input(prompt)) - 1
+        sensor = player.sensors[index]
+    except:  # prevent invalid index
+        print("Invalid Command")
+        return None
 
+    # send message
+    return net.send(Message(net.get_player().get_id(), message.TYPE_SENSE, sensor.message, sensor, 0))
 
 def get_direction_message(command_input: str) -> int:
     """
@@ -62,11 +72,9 @@ def get_direction_message(command_input: str) -> int:
 
 
 if __name__ == '__main__':
-    # TODO check robot config
-    move_speed = 50
-    # TODO assign the veriables about by configuration
+    # TODO check the validity of robot config
 
-    net = Network("100.67.93.154")
+    net = Network("100.71.95.110")
     net.connect(default_config)
     player = net.get_player()   # receive the initialized player robot
     print("You are player " + str(player.get_id()))
@@ -93,16 +101,18 @@ if __name__ == '__main__':
         # get player input
         valid_command = False
         command_type = ''
+        result = None
         while not valid_command:
             command_type = input(
                 input_code.MOVE + ": move  " + input_code.SENSE + ": sense  " + input_code.FIRE + ": fire  " + input_code.GADGET + " gadget")
             if command_type == input_code.MOVE:    # receive movement command
-                player = select_move_command(net)
-                if player is not None:
-                    valid_command = True    # successfully received server response
+                result = select_move_command(net)
             elif command_type == input_code.SENSE:  # receive sensor command
-
+                result = select_sense_command(net)
             else:
                 print("Invalid Command")
+            if result is not None:
+                valid_command = True  # successfully received server response
+                player = result  # update player
 
         print('-' * 30)

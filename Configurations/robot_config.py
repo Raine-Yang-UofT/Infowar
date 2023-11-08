@@ -2,6 +2,8 @@
 The configurations for robots, sensors, weapons, and gadgets
 """
 from dataclasses import dataclass
+import Items.sensors as sensor
+import Framework.message as message
 
 
 @dataclass
@@ -10,18 +12,19 @@ class RobotConfig:
     configurations for robot
 
     Representative invariables:
-        -HP: the robot's HP
-        -armor: the robot's armor
-        -move_sound: the sound generated when robot moves
-        -move_heat: the heat generated when robot moves
-        -sensors: the sensors equipped
-        -weapons: the weapons equipped
-        -gadgets: the gadgets equipped
+        - HP: the robot's HP
+        - armor: the robot's armor
+        - move_sound: the sound generated when robot moves
+        - move_heat: the heat generated when robot moves
+        - sensors: the sensors equipped
+        - weapons: the weapons equipped
+        - gadgets: the gadgets equipped
     """
     HP: int
     armor: int
     move_sound: int
     move_heat: int
+    move_speed: int
     sensors: list
     weapons: list
     gadgets: list
@@ -33,7 +36,9 @@ default_config = RobotConfig(
     armor=3,
     move_sound=5,
     move_heat=3,
-    sensors=[],
+    move_speed=50,
+    sensors=[sensor.SignalSensor("heat sensor", 4, message.SENSE_HEAT),
+             sensor.SignalSensor("sound sensor", 4, message.SENSE_SOUND)],
     weapons=[],
     gadgets=[]
 )

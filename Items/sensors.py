@@ -6,28 +6,15 @@ from dataclasses import dataclass
 
 
 @dataclass
-class SoundSensor:
+class SignalSensor:
     """
-    Detect sound signal at a square region with a given radius around player
-    Emits heat signal
+    Detect signal at a square region with a given radius around player
 
     Representation invariants:
-        -radius: the detection radius
-        -heat_emission: the heat emitted
+        - name: the name of sensor
+        - radius: the detection radius
+        - message: the message associated with the sensor
     """
+    name: str
     radius: int
-    heat_emission: int
-
-
-@dataclass
-class HeatSensor:
-    """
-    Detect heat signal at a square region with a given radius around player
-    Emits sound signal
-
-    Representation invariants:
-        -radius: the detection radius
-        -sound_emission: the sound emitted
-    """
-    radius: int
-    sound_emission: int
+    message: int
