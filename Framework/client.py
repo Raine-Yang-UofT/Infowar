@@ -51,6 +51,7 @@ def select_sense_command(net: Network):
     # send message
     return net.send(Message(net.get_player().get_id(), message.TYPE_SENSE, sensor.message, sensor, 0))
 
+
 def get_direction_message(command_input: str) -> int:
     """
     Return the corresponding message code for directions from input code
@@ -74,7 +75,7 @@ def get_direction_message(command_input: str) -> int:
 if __name__ == '__main__':
     # TODO check the validity of robot config
 
-    net = Network("100.71.95.110")
+    net = Network("172.16.130.164")
     net.connect(default_config)
     player = net.get_player()   # receive the initialized player robot
     print("You are player " + str(player.get_id()))

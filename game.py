@@ -32,6 +32,7 @@ class Game:
         # initialize message centers and controllers
         self.message_center = MessageCenter(self)
         self.move_controller = MoveController(self)
+        self.sensor_controller = SensorController(self)
 
     def add_player(self, player: Robot, player_id: int) -> None:
         """
@@ -173,6 +174,8 @@ class MessageCenter:
             if player_message.type == message.TYPE_MOVE:
                 # send move message to MoveController
                 self.game.move_controller.receive_message(player_message)
+            elif player_message.type == message.TYPE_SENSE:
+                self.game.sensor_controller.receive_message(player_message)
             # TODO Handle more message types
             else:
                 print("Unidentified Message Type!")
@@ -246,3 +249,39 @@ class MoveController:
         field.generate_sound(target_pos[0], target_pos[1], robot.move_sound)
         field.generate_heat(target_pos[0], target_pos[1], robot.move_heat)
 
+
+class SensorController:
+    """
+    A controller class for sensors
+    """
+    def __init__(self, game: Game) -> None:
+        """
+        Initialize MoveController
+
+        :param game: the game being played
+        """
+        self.game = game
+
+    def receive_message(self, player_message: Message) -> None:
+        """
+        Receive a sensor message from MessageCenter
+
+        :param player_message: the player message to be executed
+        :return: None
+        """
+        sensor = player_message.data  # the sensor object class
+        robot = self.game.players[player_message.source]    # the robot to control
+
+        if sensor.message == message.SENSE_SOUND:  # get the sound signal
+            sound_signal = self.game.sensors.display_signal_vision(robot.get_pos()[0], robot.get_pos()[1], 'sound', sensor.radius)
+            robot.receive_info("Sound signal detected at (" + str(robot.get_pos()[0]) + ", " + str(robot.get_pos()[1]) + ")")
+            robot.receive_info("Sound signal: ")
+            robot.receive_info(sound_signal)
+        elif sensor.message == message.SENSE_HEAT:
+            # get the heat signal
+            heat_signal = self.game.sensors.display_signal_vision(robot.get_pos()[0], robot.get_pos()[1], 'heat', sensor.radius)
+            robot.receive_info("Heat signal detected at (" + str(robot.get_pos()[0]) + ", " + str(robot.get_pos()[1]) + ")")
+            robot.receive_info("Heat signal: ")
+            robot.receive_info(heat_signal)
+        else:  # TODO: add more sensor types
+            print("unidentified sensor type")

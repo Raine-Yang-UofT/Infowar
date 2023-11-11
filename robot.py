@@ -19,6 +19,23 @@ def print_list_helper(lst: list[list]) -> None:
         print()
 
 
+def print_sensor_helper(reading: list[list]) -> None:
+    """
+    Helper function, print a 2D list for sensor data
+    Omit blank spaces in the list
+
+    :return: None
+    """
+    for row in reading:
+        contains_valid_data = False  # check if the list is not all blank blocks
+        for element in row:
+            if element != ' ':
+                print(element, end="  ")
+                contains_valid_data = True
+        if contains_valid_data:
+            print()
+
+
 class Robot(IDisplayable, IDamageable):
 
     def __init__(self, robot_config: RobotConfig, player_id: int) -> None:
@@ -117,11 +134,18 @@ class Robot(IDisplayable, IDamageable):
     def print_info(self) -> None:
         """
         Print all information gathered from self.info_list to console
+        If the information is a string, print it directly
+        If the information is a list, print it with print_list_helper
 
         :return: None
         """
         for info in self.info_list:
-            print(info)
+            if isinstance(info, str):
+                print(info)
+            elif isinstance(info, list):
+                print_sensor_helper(info)
+            else:
+                print('Unrecognized information type')
 
     def clear_info(self) -> None:
         """

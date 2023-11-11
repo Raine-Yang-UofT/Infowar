@@ -37,8 +37,8 @@ default_config = RobotConfig(
     move_sound=5,
     move_heat=3,
     move_speed=50,
-    sensors=[sensor.SignalSensor("heat sensor", 4, message.SENSE_HEAT),
-             sensor.SignalSensor("sound sensor", 4, message.SENSE_SOUND)],
+    sensors=[sensor.SignalSensor(name="heat sensor", radius=4, message=message.SENSE_HEAT),
+             sensor.SignalSensor(name="sound sensor", radius=4, message=message.SENSE_SOUND)],
     weapons=[],
     gadgets=[]
 )
