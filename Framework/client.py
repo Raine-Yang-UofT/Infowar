@@ -8,6 +8,8 @@ import message
 from message import Message
 import input_code
 
+INFINITY = 1000000000   # a psudo-infinity value for sensor priority
+
 
 def select_move_command(net: Network):
     """
@@ -49,7 +51,8 @@ def select_sense_command(net: Network):
         return None
 
     # send message
-    return net.send(Message(net.get_player().get_id(), message.TYPE_SENSE, sensor.message, sensor, 0))
+    # sensors always have the lowest priority
+    return net.send(Message(net.get_player().get_id(), message.TYPE_SENSE, sensor.message, sensor, INFINITY))
 
 
 def get_direction_message(command_input: str) -> int:
@@ -75,7 +78,7 @@ def get_direction_message(command_input: str) -> int:
 if __name__ == '__main__':
     # TODO check the validity of robot config
 
-    net = Network("172.16.130.164")
+    net = Network("192.168.103.124")
     net.connect(default_config)
     player = net.get_player()   # receive the initialized player robot
     print("You are player " + str(player.get_id()))
@@ -92,7 +95,9 @@ if __name__ == '__main__':
         round_count += 1
         # print robot status and information
         print(player.display_status())
+        print("Information: ")
         player.print_info()
+        print("Vision: ")
         player.print_vision()
         print("Map: ")
         player.print_map()

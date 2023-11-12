@@ -37,8 +37,9 @@ default_config = RobotConfig(
     move_sound=5,
     move_heat=3,
     move_speed=50,
-    sensors=[sensor.SignalSensor(name="heat sensor", radius=4, message=message.SENSE_HEAT),
-             sensor.SignalSensor(name="sound sensor", radius=4, message=message.SENSE_SOUND)],
+    sensors=[sensor.SignalSensor(name="heat sensor", radius=5, message=message.SENSE_HEAT),
+             sensor.SignalSensor(name="sound sensor", radius=5, message=message.SENSE_SOUND),
+             sensor.Lidar(name="lidar", radius=2, sound_emission=2, heat_emission=5, message=message.SENSE_LIDAR)],
     weapons=[],
     gadgets=[]
 )

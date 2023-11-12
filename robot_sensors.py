@@ -2,6 +2,8 @@
 Handle sensor detection
 """
 from battlefield import Battlefield
+import Items.sensors as sensors
+import Framework.message as message
 
 
 class RobotSensor:
@@ -31,27 +33,53 @@ class RobotSensor:
 
         return result
 
-    def display_signal_vision(self, x: int, y: int, signal_type: str, radius: int) -> list[list[int]]:
+    def display_signal_vision(self, x: int, y: int, sensor: sensors.SignalSensor) -> list[list[int]]:
         """
         Show the sound/heat signal centered at (x, y) at a given radius
 
         :param x: the x-coordinate of detection point
         :param y: the y-coordinate of detection point
-        :param signal_type: the type of signal (sound/heat)
-        :param radius: the radius of signal (square region)
+        :param sensor: the sensor used to detect the signal
         :return: the signal to display
         """
         result = []
         for i in range(0, len(self.battlefield.field)):
             row = []
             for j in range(0, len(self.battlefield.field[0])):
-                if y - radius <= i <= y + radius and x - radius <= j <= x + radius:
-                    if signal_type == 'sound':
+                if y - sensor.radius <= i <= y + sensor.radius and x - sensor.radius <= j <= x + sensor.radius:
+                    if sensor.message == message.SENSE_SOUND:
                         row.append(self.battlefield.get_grid(j, i).get_sound())
-                    elif signal_type == 'heat':
+                    elif sensor.message == message.SENSE_HEAT:
                         row.append(self.battlefield.get_grid(j, i).get_heat())
                     else:
                         print('Unrecognized signal type')
             result.append(row)
+
+        return result
+
+    def display_lidar_vision(self, x: int, y: int, lidar: sensors.Lidar) -> list[list[str]]:
+        """
+        Show the lidar detection centered at (x, y) at a given radius
+        Emit sound and heat signal around the detection point
+
+        :param x: the x-coordinate of detection point
+        :param y: the y-coordinate of detection point
+        :param lidar: the lidar used to detect the signal
+        :return: the signal to display
+        """
+        # create grid
+        result = []
+        for i in range(0, len(self.battlefield.field)):
+            row = []
+            for j in range(0, len(self.battlefield.field[0])):
+                if y - lidar.radius <= i <= y + lidar.radius and x - lidar.radius <= j <= x + lidar.radius:
+                    row.append(self.battlefield.get_grid(j, i).display())
+                else:
+                    row.append(' ')
+            result.append(row)
+
+        # emit sound and heat
+        self.battlefield.generate_sound(x, y, lidar.sound_emission)
+        self.battlefield.generate_heat(x, y, lidar.heat_emission)
 
         return result

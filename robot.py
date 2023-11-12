@@ -157,12 +157,11 @@ class Robot(IDisplayable, IDamageable):
 
     def update_map(self, vision: list[list[str]]) -> None:
         """
-        Update the player's local map and vision
+        Update the player's local map
 
         :param vision: the field of vision obtained by player
         :return: None
         """
-        # update local map
         for i in range(0, len(vision)):
             for j in range(0, len(vision[0])):
                 if self.map[i][j] != vision[i][j] and vision[i][j] != ' ':
@@ -171,7 +170,13 @@ class Robot(IDisplayable, IDamageable):
                     if vision[i][j] == 'R' and (j, i) != self.grid.get_pos():
                         self.map[i][j] = '_'
 
-        # update robot vision
+    def update_vision(self, vision: list[list[str]]) -> None:
+        """
+        Update the player's vision
+
+        :param vision: the field of vision obtained by player
+        :return: None
+        """
         x, y = self.grid.get_pos()
         for i in range(y - 1, y + 2):
             row = []

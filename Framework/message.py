@@ -1,8 +1,8 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 
-@dataclass
+@dataclass(order=True)
 class Message:
     """
     A message from client
@@ -13,22 +13,13 @@ class Message:
         command: the specific command player sends
         data: any data in the message (if required)
         priority: the order of message in message queue,
-                  higher value for higher priority
+                  lower value for higher priority
     """
     source: int
     type: int
     command: int
     data: Any
     priority: int
-
-    def __lt__(self, other):
-        """
-        Override the comparison between messages
-
-        :param other: another Message instance
-        :return: whether this message has a higher priority
-        """
-        return self.priority > other.priority
 
 
 """
@@ -56,3 +47,4 @@ MOVE = 100
 # sensor message
 SENSE_SOUND = 200
 SENSE_HEAT = 201
+SENSE_LIDAR = 202

@@ -7,7 +7,7 @@ from Framework import message
 from Framework.message import Message
 from queue import PriorityQueue
 from Configurations import game_config
-from robot_sensors import RobotSensor
+import robot_sensors
 
 
 class Game:
@@ -22,7 +22,7 @@ class Game:
         self.game_id = game_id
         self.num_players = num_players
         self.battlefield = Battlefield(game_config.FIELD_ROW, game_config.FIELD_COL)
-        self.sensors = RobotSensor(self.battlefield)
+        self.sensors = robot_sensors.RobotSensor(self.battlefield)  # the sensors in the game
         self.battlefield.initialize_field(game_config.BARRICADE_COVERAGE, game_config.HARD_BARRICADE_COVERAGE, game_config.BARRICADE_HP_RANGE,
                                           game_config.BARRICADE_ARMOR_RANGE)
         self.players = {}  # the dict of all players
@@ -103,7 +103,9 @@ class Game:
         :return: None
         """
         x, y = robot.get_pos()
-        robot.update_map(self.sensors.display_player_vision(x, y))
+        vision = self.sensors.display_player_vision(x, y)
+        robot.update_map(vision)
+        robot.update_vision(vision)
 
 
 # test methods: print battlefield status to terminal
@@ -273,15 +275,21 @@ class SensorController:
         robot = self.game.players[player_message.source]    # the robot to control
 
         if sensor.message == message.SENSE_SOUND:  # get the sound signal
-            sound_signal = self.game.sensors.display_signal_vision(robot.get_pos()[0], robot.get_pos()[1], 'sound', sensor.radius)
+            sound_signal = self.game.sensors.display_signal_vision(robot.get_pos()[0], robot.get_pos()[1], sensor)
             robot.receive_info("Sound signal detected at (" + str(robot.get_pos()[0]) + ", " + str(robot.get_pos()[1]) + ")")
             robot.receive_info("Sound signal: ")
             robot.receive_info(sound_signal)
         elif sensor.message == message.SENSE_HEAT:
             # get the heat signal
-            heat_signal = self.game.sensors.display_signal_vision(robot.get_pos()[0], robot.get_pos()[1], 'heat', sensor.radius)
+            heat_signal = self.game.sensors.display_signal_vision(robot.get_pos()[0], robot.get_pos()[1], sensor)
             robot.receive_info("Heat signal detected at (" + str(robot.get_pos()[0]) + ", " + str(robot.get_pos()[1]) + ")")
             robot.receive_info("Heat signal: ")
             robot.receive_info(heat_signal)
+        elif sensor.message == message.SENSE_LIDAR:
+            # get the lider signal
+            lidar_view = self.game.sensors.display_lidar_vision(robot.get_pos()[0], robot.get_pos()[1], sensor)
+            robot.receive_info("Complete lidar scanning at (" + str(robot.get_pos()[0]) + ", " + str(robot.get_pos()[1]) + ")")
+            robot.receive_info(lidar_view)
+            robot.update_map(lidar_view)
         else:  # TODO: add more sensor types
             print("unidentified sensor type")
