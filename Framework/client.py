@@ -46,13 +46,40 @@ def select_sense_command(net: Network):
     try:
         index = int(input(prompt)) - 1
         sensor = player.sensors[index]
-    except:  # prevent invalid index
+        select_sensor_parameters(sensor)    # input additional parameters for sensor
+    except Exception as e:  # prevent invalid index
         print("Invalid Command")
+        print(e)
         return None
 
     # send message
     # sensors always have the lowest priority
     return net.send(Message(net.get_player().get_id(), message.TYPE_SENSE, sensor.message, sensor, INFINITY))
+
+
+def select_sensor_parameters(sensor):
+    """
+    Prompt player to add paramters to sensor command (is required)
+
+    :param sensor: the sensor dataclass
+    :return: None
+    """
+    if sensor.message == message.SENSE_DRONE:
+        command = input("Enter (w, a, s, d) to map the path of drone: ")
+        if not (all([c in ['w', 'a', 's', 'd'] for c in command]) and len(command) <= sensor.longest_range):
+            print("Invalid drone path, make sure the path only contains (w, a, s, d) and is shorter than " + str(sensor.longest_range) + " steps")
+            raise Exception()
+        # update drone path
+        print("drone path updated")
+        sensor.commands = command
+    elif sensor.message == message.SENSE_SCOUT_CAR:
+        direction = input("Enter (w, a, s, d) to map the direction of scout car: ")
+        if direction not in ['w', 'a', 's', 'd']:
+            print("Invalid scout car direction, make sure the direction is one of (w, a, s, d)")
+            raise Exception()
+        # update scout car direction
+        print("scout car direction updated")
+        sensor.direction = direction
 
 
 def get_direction_message(command_input: str) -> int:
@@ -78,7 +105,7 @@ def get_direction_message(command_input: str) -> int:
 if __name__ == '__main__':
     # TODO check the validity of robot config
 
-    net = Network("192.168.103.124")
+    net = Network("100.71.84.57")
     net.connect(default_config)
     player = net.get_player()   # receive the initialized player robot
     print("You are player " + str(player.get_id()))

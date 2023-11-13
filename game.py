@@ -291,5 +291,17 @@ class SensorController:
             robot.receive_info("Complete lidar scanning at (" + str(robot.get_pos()[0]) + ", " + str(robot.get_pos()[1]) + ")")
             robot.receive_info(lidar_view)
             robot.update_map(lidar_view)
+        elif sensor.message == message.SENSE_DRONE:
+            # get the drone signal
+            drone_view = self.game.sensors.display_drone_vision(robot.get_pos()[0], robot.get_pos()[1], sensor)
+            robot.receive_info("Drone scanning at (" + str(sensor.location[0]) + ", " + str(sensor.location[1]) + ")")
+            robot.receive_info(drone_view)
+            robot.update_map(drone_view)
+        elif sensor.message == message.SENSE_SCOUT_CAR:
+            # get the scout car signal
+            scout_car_view = self.game.sensors.display_scout_car_vision(robot.get_pos()[0], robot.get_pos()[1], sensor)
+            robot.receive_info("Scout car scanning at (" + str(sensor.location[0]) + ", " + str(sensor.location[1]) + ")")
+            robot.receive_info(scout_car_view)
+            robot.update_map(scout_car_view)
         else:  # TODO: add more sensor types
             print("unidentified sensor type")

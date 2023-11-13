@@ -144,6 +144,7 @@ class Robot(IDisplayable, IDamageable):
                 print(info)
             elif isinstance(info, list):
                 print_sensor_helper(info)
+                # print_list_helper(info)
             else:
                 print('Unrecognized information type')
 

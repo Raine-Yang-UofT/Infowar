@@ -39,7 +39,9 @@ default_config = RobotConfig(
     move_speed=50,
     sensors=[sensor.SignalSensor(name="heat sensor", radius=5, message=message.SENSE_HEAT),
              sensor.SignalSensor(name="sound sensor", radius=5, message=message.SENSE_SOUND),
-             sensor.Lidar(name="lidar", radius=2, sound_emission=2, heat_emission=5, message=message.SENSE_LIDAR)],
+             sensor.Lidar(name="lidar", radius=2, sound_emission=2, heat_emission=5, message=message.SENSE_LIDAR),
+             sensor.Drone(name='drone', radius=2, sound_emission=6, heat_emission=2, message=message.SENSE_DRONE, commands='', longest_range=10, location=(0, 0)),
+             sensor.ScoutCar(name='scout car', radius=2, sound_emission=4, heat_emission=2, message=message.SENSE_SCOUT_CAR, direction='', location=(0, 0), max_barricade_remove=3)],
     weapons=[],
     gadgets=[]
 )
