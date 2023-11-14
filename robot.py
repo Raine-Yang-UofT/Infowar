@@ -29,7 +29,7 @@ def print_sensor_helper(reading: list[list]) -> None:
     for row in reading:
         contains_valid_data = False  # check if the list is not all blank blocks
         for element in row:
-            if element != ' ':
+            if element != '*':
                 print(element, end="  ")
                 contains_valid_data = True
         if contains_valid_data:
@@ -71,7 +71,7 @@ class Robot(IDisplayable, IDamageable):
         # the robot's information list
         self.info_list = []
         # the robot's local map
-        self.map = [[" " for _ in range(0, FIELD_COL)] for _ in range(0, FIELD_ROW)]
+        self.map = [["*" for _ in range(0, FIELD_COL)] for _ in range(0, FIELD_ROW)]
         # the robot's current vision
         self.vision = []
 
@@ -143,8 +143,8 @@ class Robot(IDisplayable, IDamageable):
             if isinstance(info, str):
                 print(info)
             elif isinstance(info, list):
-                print_sensor_helper(info)
-                # print_list_helper(info)
+                # print_sensor_helper(info)
+                print_list_helper(info)
             else:
                 print('Unrecognized information type')
 
@@ -165,7 +165,7 @@ class Robot(IDisplayable, IDamageable):
         """
         for i in range(0, len(vision)):
             for j in range(0, len(vision[0])):
-                if self.map[i][j] != vision[i][j] and vision[i][j] != ' ':
+                if self.map[i][j] != vision[i][j] and vision[i][j] != '*':
                     self.map[i][j] = vision[i][j]
                     # hide enemy robots
                     if vision[i][j] == 'R' and (j, i) != self.grid.get_pos():

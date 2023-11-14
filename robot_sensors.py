@@ -39,7 +39,7 @@ class RobotSensor:
                 if y - radius <= i <= y + radius and x - radius <= j <= x + radius:
                     row.append(self.battlefield.get_grid(j, i).display())
                 else:
-                    row.append(' ')
+                    row.append('*')
             result.append(row)
 
         return result

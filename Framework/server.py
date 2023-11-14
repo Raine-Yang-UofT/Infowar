@@ -6,7 +6,7 @@ from robot import Robot
 from game import Game
 import message
 
-server = "100.71.84.57"  # the server's address, currently local address
+server = "100.67.82.128"  # the server's address, currently local address
 port = 5555  # the port for connection
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

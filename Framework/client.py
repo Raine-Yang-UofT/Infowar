@@ -105,7 +105,7 @@ def get_direction_message(command_input: str) -> int:
 if __name__ == '__main__':
     # TODO check the validity of robot config
 
-    net = Network("100.71.84.57")
+    net = Network("100.67.82.128")
     net.connect(default_config)
     player = net.get_player()   # receive the initialized player robot
     print("You are player " + str(player.get_id()))
@@ -126,8 +126,9 @@ if __name__ == '__main__':
         player.print_info()
         print("Vision: ")
         player.print_vision()
-        print("Map: ")
-        player.print_map()
+        # maps are manually opened
+        # print("Map: ")
+        # player.print_map()
 
         print("Round " + str(round_count) + "  Please select your move:")
 
@@ -137,11 +138,15 @@ if __name__ == '__main__':
         result = None
         while not valid_command:
             command_type = input(
-                input_code.MOVE + ": move  " + input_code.SENSE + ": sense  " + input_code.FIRE + ": fire  " + input_code.GADGET + " gadget")
+                input_code.MOVE + ": move  " + input_code.SENSE + ": sense  " + input_code.FIRE + ": fire  " + input_code.GADGET + " gadget" + "   (m: display map)")
             if command_type == input_code.MOVE:    # receive movement command
                 result = select_move_command(net)
             elif command_type == input_code.SENSE:  # receive sensor command
                 result = select_sense_command(net)
+            elif command_type == 'm':
+                print("Map: ")
+                player.print_map()
+
             else:
                 print("Invalid Command")
             if result is not None:
