@@ -2,6 +2,7 @@
 A Module containing all interface definitions
 """
 from dataclasses import dataclass
+import damage as dmg
 
 
 class IDisplayable:
@@ -19,45 +20,13 @@ class IDisplayable:
         # Override in children class
 
 
-@dataclass
-class Damage:
-    """
-    The damage information
-
-    Representation invariants:
-        - damage: the damage value
-        - penetration: the penetration of damage
-    """
-    damage: int
-    penetration: int
-
-
-@dataclass
-class StraightDamage(Damage):
-    """
-    The damage information for straight weapons
-
-    Representation invariants:
-        - damage: the damage value
-        - penetration: the penetration of damage
-        - accuracy: the accuracy of the weapon
-        - accuracy_decay: the decay of accuracy through distance
-        - range: the range of weapon
-    """
-    damage: int
-    penetration: int
-    accuracy: float
-    accuracy_decay: float
-    range: int
-
-
 class IDamageable:
     """
     IDamageable: an object can be damaged by weapons
 
     child classes should implement get_damage() method
     """
-    def get_damage(self, damage: Damage):
+    def get_damage(self, damage: dmg.Damage):
         """
         Impose certain damage on the object with a given damage and penetration
 

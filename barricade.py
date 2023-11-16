@@ -8,7 +8,8 @@ moves to the same grid it occupies
 A hard barricade has a certain HP and is destroeyd only when it loses all
 HP from weapon shot. Player cannot move to a grid occupied by a hard barricade
 """
-from interface import IDisplayable, IDamageable, Damage
+from interface import IDisplayable, IDamageable
+from damage import Damage
 from grid import Grid
 
 

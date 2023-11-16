@@ -2,8 +2,24 @@
 The configurations for robots, sensors, weapons, and gadgets
 """
 from dataclasses import dataclass
-import Items.sensors as sensor
+import Items.sensors as sensors
+import Items.weapons as weapons
 import Framework.message as message
+
+
+@dataclass
+class Armor:
+    """
+    configurations for robot armor
+
+    Representative invariant:
+        - max_armor: the maximum armor value
+        - armor_reduce_rate: the probably that armor decreases after each damage
+        - armor_protection: the percentage of damage absorbed by armor
+    """
+    max_armor: int
+    armor_reduce_rate: float
+    armor_protection: float
 
 
 @dataclass
@@ -21,7 +37,7 @@ class RobotConfig:
         - gadgets: the gadgets equipped
     """
     HP: int
-    armor: int
+    armor: Armor
     move_sound: int
     move_heat: int
     move_speed: int
@@ -30,18 +46,25 @@ class RobotConfig:
     gadgets: list
 
 
+# armors
+standard_infantry_armor = Armor(3, 0.4, 0.6)
+light_infantry_armor = Armor(2, 0.4, 0.6)
+heavy_infantry_armor = Armor(4, 0.4, 0.6)
+standard_porcelain_armor = Armor(3, 0.75, 0.8)
+light_porcelain_armor = Armor(2, 0.75, 0.8)
+heavy_porcelain_armor = Armor(4, 0.75, 0.8)
+standard_steel_armor = Armor(4, 0.2, 0.4)
+heavy_steel_armor = Armor(5, 0.2, 0.4)
+
+
 # a default configuration for testing
 default_config = RobotConfig(
     HP=100,
-    armor=3,
+    armor=standard_infantry_armor,
     move_sound=5,
     move_heat=3,
     move_speed=50,
-    sensors=[sensor.SignalSensor(name="heat sensor", radius=5, message=message.SENSE_HEAT),
-             sensor.SignalSensor(name="sound sensor", radius=5, message=message.SENSE_SOUND),
-             sensor.Lidar(name="lidar", radius=2, sound_emission=2, heat_emission=5, message=message.SENSE_LIDAR),
-             sensor.Drone(name='drone', radius=2, sound_emission=6, heat_emission=2, message=message.SENSE_DRONE, commands='', longest_range=10, location=(0, 0)),
-             sensor.ScoutCar(name='scout car', radius=2, sound_emission=4, heat_emission=2, message=message.SENSE_SCOUT_CAR, direction='', location=(0, 0), max_barricade_remove=3)],
-    weapons=[],
+    sensors=[sensors.heat_sensor, sensors.sound_sensor, sensors.lidar, sensors.drone, sensors.scout_car],
+    weapons=[weapons.assulter_rifle, weapons.pistol],
     gadgets=[]
 )

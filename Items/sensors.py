@@ -1,8 +1,8 @@
 """
 Sensor items
 """
-
 from dataclasses import dataclass
+from Framework import message
 
 
 @dataclass
@@ -90,3 +90,11 @@ class ScoutCar:
     direction: str
     location: tuple[int, int]
     max_barricade_remove: int
+
+
+# sensor objects
+heat_sensor = SignalSensor(name="heat sensor", radius=5, message=message.SENSE_HEAT)
+sound_sensor = SignalSensor(name="sound sensor", radius=5, message=message.SENSE_SOUND)
+lidar = Lidar(name="lidar", radius=2, sound_emission=2, heat_emission=5, message=message.SENSE_LIDAR)
+drone = Drone(name='drone', radius=2, sound_emission=6, heat_emission=2, message=message.SENSE_DRONE, commands='', longest_range=10, location=(0, 0))
+scout_car = ScoutCar(name='scout car', radius=2, sound_emission=4, heat_emission=2, message=message.SENSE_SCOUT_CAR, direction='', location=(0, 0), max_barricade_remove=3)

@@ -1,10 +1,12 @@
 """
 The class for a player-controlled robot
 """
-from interface import IDisplayable, IDamageable, Damage
+from interface import IDisplayable, IDamageable
+from damage import Damage
 from Configurations.robot_config import RobotConfig
 from grid import Grid
 from Configurations.game_config import FIELD_ROW, FIELD_COL
+import random
 
 
 def print_list_helper(lst: list[list]) -> None:
@@ -50,7 +52,9 @@ class Robot(IDisplayable, IDamageable):
 
         # extract base configuration
         self.max_HP = robot_config.HP
-        self.max_armor = robot_config.armor
+        self.max_armor = robot_config.armor.max_armor
+        self.armor_reduction_rate = robot_config.armor.armor_reduce_rate
+        self.armor_protection = robot_config.armor.armor_protection
         self.move_sound = robot_config.move_sound
         self.move_heat = robot_config.move_heat
         self.move_speed = robot_config.move_speed
@@ -211,4 +215,12 @@ class Robot(IDisplayable, IDamageable):
         :param damage: the damage information
         :return: None
         """
-        # TODO: implement damage calculation algorithm
+        if self.armor >= damage.penetration:    # armor blocks part of damage
+            self.HP -= int(damage.damage * (1 - self.armor_protection))
+            # check if armor decreases
+            if random.random() <= self.armor_reduction_rate:
+                self.armor -= 1
+        else:   # armor is penetrated
+            self.HP -= damage.damage
+
+        # TODO: check if player is dead

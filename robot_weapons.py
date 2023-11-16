@@ -4,6 +4,7 @@ Handle weapon detection
 from battlefield import Battlefield
 from interface import IDamageable, Damage, StraightDamage
 import Framework.message as message
+import random
 
 
 class RobotWeapons:
@@ -45,4 +46,6 @@ class RobotWeapons:
 
         # deals damage to the target
         if isinstance(self.battlefield.get_grid(x, y).get_occupant(), IDamageable):
-            self.battlefield.get_grid(x, y).get_occupant().get_damage(damage)
+            # check whether the target is hit
+            if random.random() <= damage.accuracy:
+                self.battlefield.get_grid(x, y).get_occupant().get_damage(damage)
