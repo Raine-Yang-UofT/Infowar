@@ -8,8 +8,7 @@ moves to the same grid it occupies
 A hard barricade has a certain HP and is destroeyd only when it loses all
 HP from weapon shot. Player cannot move to a grid occupied by a hard barricade
 """
-from interface import IDisplayable
-from interface import IDamageable
+from interface import IDisplayable, IDamageable, Damage
 from grid import Grid
 
 
@@ -26,7 +25,7 @@ class Barricade(IDisplayable, IDamageable):
         """
         return 'x'
 
-    def get_damage(self, damage: int, penetration: int):
+    def get_damage(self, damage: Damage):
         """
         Override get_damage() method in IDamageable
 
@@ -50,7 +49,7 @@ class HardBarricade(IDisplayable, IDamageable):
         """
         return '#'
 
-    def get_damage(self, damage: int, penetration: int):
+    def get_damage(self, damage: Damage):
         """
         Override get_damage() method in IDamageable
 
@@ -58,9 +57,9 @@ class HardBarricade(IDisplayable, IDamageable):
         Otherwise, self.HP reduces the value of damage. The hard barricade is destroyed when
         HP is lower than 0
         """
-        if penetration > self.armor:
+        if damage.penetration > self.armor:
             self.grid.remove_occupant()  # erase the hard barricade
         else:
-            self.HP -= damage
+            self.HP -= damage.damage
             if self.HP <= 0:
                 self.grid.remove_occupant()  # erase the hard barricade

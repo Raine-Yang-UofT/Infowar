@@ -1,7 +1,7 @@
 """
 The class for a player-controlled robot
 """
-from interface import IDisplayable, IDamageable
+from interface import IDisplayable, IDamageable, Damage
 from Configurations.robot_config import RobotConfig
 from grid import Grid
 from Configurations.game_config import FIELD_ROW, FIELD_COL
@@ -203,3 +203,12 @@ class Robot(IDisplayable, IDamageable):
         :return: None
         """
         print_list_helper(self.map)
+
+    def get_damage(self, damage: Damage):
+        """
+        Receive damage. Override get_damage() in IDamageable
+
+        :param damage: the damage information
+        :return: None
+        """
+        # TODO: implement damage calculation algorithm
