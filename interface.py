@@ -1,7 +1,6 @@
 """
 A Module containing all interface definitions
 """
-from dataclasses import dataclass
 import damage as dmg
 
 

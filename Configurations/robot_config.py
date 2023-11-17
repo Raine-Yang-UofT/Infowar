@@ -14,11 +14,11 @@ class Armor:
 
     Representative invariant:
         - max_armor: the maximum armor value
-        - armor_reduce_rate: the probably that armor decreases after each damage
+        - armor_reduction_rate: the probably that armor decreases after each damage
         - armor_protection: the percentage of damage absorbed by armor
     """
     max_armor: int
-    armor_reduce_rate: float
+    armor_reduction_rate: float
     armor_protection: float
 
 
@@ -47,24 +47,25 @@ class RobotConfig:
 
 
 # armors
-standard_infantry_armor = Armor(3, 0.4, 0.6)
-light_infantry_armor = Armor(2, 0.4, 0.6)
-heavy_infantry_armor = Armor(4, 0.4, 0.6)
-standard_porcelain_armor = Armor(3, 0.75, 0.8)
-light_porcelain_armor = Armor(2, 0.75, 0.8)
-heavy_porcelain_armor = Armor(4, 0.75, 0.8)
-standard_steel_armor = Armor(4, 0.2, 0.4)
-heavy_steel_armor = Armor(5, 0.2, 0.4)
+standard_composite_armor = Armor(3, 0.4, 0.6)
+light_composite_armor = Armor(2, 0.4, 0.6)
+heavy_composite_armor = Armor(4, 0.4, 0.6)
+standard_porcelain_armor = Armor(3, 0.6, 0.8)
+light_porcelain_armor = Armor(2, 0.6, 0.8)
+heavy_porcelain_armor = Armor(4, 0.6, 0.8)
+standard_steel_armor = Armor(3, 0.2, 0.4)
+light_steel_armor = Armor(2, 0.2, 0.4)
+heavy_steel_armor = Armor(4, 0.2, 0.4)
 
 
 # a default configuration for testing
 default_config = RobotConfig(
     HP=100,
-    armor=standard_infantry_armor,
+    armor=standard_composite_armor,
     move_sound=5,
     move_heat=3,
     move_speed=50,
     sensors=[sensors.heat_sensor, sensors.sound_sensor, sensors.lidar, sensors.drone, sensors.scout_car],
-    weapons=[weapons.assulter_rifle, weapons.pistol],
+    weapons=[weapons.assulter_rifle, weapons.submachine_gun, weapons.pistol, weapons.sniper_rifle, weapons.shotgun],
     gadgets=[]
 )

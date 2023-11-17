@@ -1,6 +1,7 @@
 """
 The class of a gameplay
 """
+import robot_weapons
 from battlefield import Battlefield
 from robot import Robot
 from Framework import message
@@ -8,6 +9,7 @@ from Framework.message import Message
 from queue import PriorityQueue
 from Configurations import game_config
 import robot_sensors
+from Items import weapons
 
 
 class Game:
@@ -23,6 +25,7 @@ class Game:
         self.num_players = num_players
         self.battlefield = Battlefield(game_config.FIELD_ROW, game_config.FIELD_COL)
         self.sensors = robot_sensors.RobotSensor(self.battlefield)  # the sensors in the game
+        self.weapons = robot_weapons.RobotWeapons(self.battlefield) # the weapons in the game
         self.battlefield.initialize_field(game_config.BARRICADE_COVERAGE, game_config.HARD_BARRICADE_COVERAGE, game_config.BARRICADE_HP_RANGE,
                                           game_config.BARRICADE_ARMOR_RANGE)
         self.players = {}  # the dict of all players
@@ -33,6 +36,7 @@ class Game:
         self.message_center = MessageCenter(self)
         self.move_controller = MoveController(self)
         self.sensor_controller = SensorController(self)
+        self.weapon_controller = WeaponController(self)
 
     def add_player(self, player: Robot, player_id: int) -> None:
         """
@@ -178,6 +182,8 @@ class MessageCenter:
                 self.game.move_controller.receive_message(player_message)
             elif player_message.type == message.TYPE_SENSE:
                 self.game.sensor_controller.receive_message(player_message)
+            elif player_message.type == message.TYPE_FIRE:
+                self.game.weapon_controller.receive_message(player_message)
             # TODO Handle more message types
             else:
                 print("Unidentified Message Type!")
@@ -258,7 +264,7 @@ class SensorController:
     """
     def __init__(self, game: Game) -> None:
         """
-        Initialize MoveController
+        Initialize SensorController
 
         :param game: the game being played
         """
@@ -271,7 +277,7 @@ class SensorController:
         :param player_message: the player message to be executed
         :return: None
         """
-        sensor = player_message.data  # the sensor object class
+        sensor = player_message.data  # the sensor object
         robot = self.game.players[player_message.source]    # the robot to control
 
         if sensor.message == message.SENSE_SOUND:  # get the sound signal
@@ -305,3 +311,32 @@ class SensorController:
             robot.update_map(scout_car_view)
         else:  # TODO: add more sensor types
             print("unidentified sensor type")
+
+
+class WeaponController:
+    """
+    A controller class for weapons
+    """
+    def __init__(self, game):
+        """
+        Initialize WeaponController
+
+        :param game: the game being played
+        """
+        self.game = game
+
+    def receive_message(self, player_message: Message) -> None:
+        """
+        Receive a weapon message from MessageCenter
+
+        :param player_message: the player message to be executed
+        :return: None
+        """
+        weapon = player_message.data  # the weapon object
+        robot = self.game.players[player_message.source]    # the robot to control
+
+        if isinstance(weapon, weapons.StraightWeapon):
+            self.game.weapons.shoot_straight_weapon(robot.get_pos()[0], robot.get_pos()[1], weapon)
+        # TODO Add more weapon types
+        else:
+            print("unidentified weapon type")

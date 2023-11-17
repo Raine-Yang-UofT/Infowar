@@ -52,16 +52,14 @@ class Robot(IDisplayable, IDamageable):
 
         # extract base configuration
         self.max_HP = robot_config.HP
-        self.max_armor = robot_config.armor.max_armor
-        self.armor_reduction_rate = robot_config.armor.armor_reduce_rate
-        self.armor_protection = robot_config.armor.armor_protection
+        self.armor_equip = robot_config.armor
         self.move_sound = robot_config.move_sound
         self.move_heat = robot_config.move_heat
         self.move_speed = robot_config.move_speed
 
         # the robot current status: initialize as max values
         self.HP = self.max_HP
-        self.armor = self.max_armor
+        self.armor = self.armor_equip.max_armor
 
         # the sensor configurations
         self.sensors = robot_config.sensors
@@ -93,7 +91,7 @@ class Robot(IDisplayable, IDamageable):
 
         :return: a string containing status information
         """
-        status_message = "Player " + str(self.player_id) + "  HP: " + str(self.HP) + '/' + str(self.max_HP) + "  armor: " + str(self.armor) + '/' + str(self.max_armor)
+        status_message = "Player " + str(self.player_id) + "  HP: " + str(self.HP) + '/' + str(self.max_HP) + "  armor: " + str(self.armor) + '/' + str(self.armor_equip.max_armor)
         return status_message
 
     def get_id(self) -> int:
@@ -216,11 +214,13 @@ class Robot(IDisplayable, IDamageable):
         :return: None
         """
         if self.armor >= damage.penetration:    # armor blocks part of damage
-            self.HP -= int(damage.damage * (1 - self.armor_protection))
+            self.HP -= int(damage.damage * (1 - self.armor_equip.armor_protection))
             # check if armor decreases
-            if random.random() <= self.armor_reduction_rate:
+            if random.random() <= self.armor_equip.armor_reduction_rate:
                 self.armor -= 1
         else:   # armor is penetrated
             self.HP -= damage.damage
+
+        self.receive_info("Receives damage!")
 
         # TODO: check if player is dead

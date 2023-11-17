@@ -14,6 +14,7 @@ class Damage:
     penetration: int
 
 
+'''
 @dataclass
 class StraightDamage(Damage):
     """
@@ -31,3 +32,4 @@ class StraightDamage(Damage):
     accuracy: float
     accuracy_decay: float
     range: int
+'''

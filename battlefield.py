@@ -91,6 +91,7 @@ class Battlefield(IDisplayable):
         :return: field[y][x]
         """
         if y < 0 or y >= len(self.field) or x < 0 or x >= len(self.field[0]):
+            print("grid index out of bound")
             return None
 
         return self.field[y][x]

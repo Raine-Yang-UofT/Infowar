@@ -7,8 +7,9 @@ from Configurations.robot_config import default_config, RobotConfig
 import message
 from message import Message
 import input_code
+from Items import weapons
 
-INFINITY = 1000000000   # a psudo-infinity value for sensor priority
+INFINITY = 1000000000  # a psudo-infinity value for sensor priority
 
 
 def select_move_command(net: Network):
@@ -46,7 +47,7 @@ def select_sense_command(net: Network):
     try:
         index = int(input(prompt)) - 1
         sensor = player.sensors[index]
-        select_sensor_parameters(sensor)    # input additional parameters for sensor
+        select_sensor_parameters(sensor)  # input additional parameters for sensor
     except Exception as e:  # prevent invalid index
         print("Invalid Command")
         print(e)
@@ -67,7 +68,8 @@ def select_sensor_parameters(sensor):
     if sensor.message == message.SENSE_DRONE:
         command = input("Enter (w, a, s, d) to map the path of drone: ")
         if not (all([c in ['w', 'a', 's', 'd'] for c in command]) and len(command) <= sensor.longest_range):
-            print("Invalid drone path, make sure the path only contains (w, a, s, d) and is shorter than " + str(sensor.longest_range) + " steps")
+            print("Invalid drone path, make sure the path only contains (w, a, s, d) and is shorter than " + str(
+                sensor.longest_range) + " steps")
             raise Exception()
         # update drone path
         print("drone path updated")
@@ -80,6 +82,47 @@ def select_sensor_parameters(sensor):
         # update scout car direction
         print("scout car direction updated")
         sensor.direction = direction
+
+
+def select_fire_command(net: Network):
+    """
+    Prompt the player to send fire command
+
+    :param net: the network connection to server
+    :return: the robot object received from server
+    """
+    print("Select the weapon")
+    prompt = ''
+    for i in range(0, len(player.weapons)):
+        prompt += str(i + 1) + ": " + player.weapons[i].name + "  "
+    try:
+        index = int(input(prompt)) - 1
+        weapon = player.weapons[index]
+        select_weapon_parameters(weapon)  # input additional parameters for weapon
+    except Exception as e:  # prevent invalid index
+        print("Invalid Command")
+        print(e)
+        return None
+
+    # send message
+    return net.send(Message(net.get_player().get_id(), message.TYPE_FIRE, weapon.message, weapon, weapon.reaction_time))
+
+
+def select_weapon_parameters(weapon):
+    """
+    Prompt player to add paramters to weapon command (is required)
+
+    :param weapon: the weapon selected
+    :return: None
+    """
+    # select direction for straight-firing weapons
+    if isinstance(weapon, weapons.StraightWeapon):
+        command_input = input("Select the direction of firing:" +
+                              input_code.UP + ": up  " + input_code.DOWN + ": down  " + input_code.LEFT + ": left  " + input_code.RIGHT + ": right")
+        if command_input not in [input_code.UP, input_code.DOWN, input_code.LEFT, input_code.RIGHT]:
+            print("Invalid Command")
+            raise Exception()
+        weapon.message = get_direction_message(command_input)   # update weapon message as firing direction
 
 
 def get_direction_message(command_input: str) -> int:
@@ -105,9 +148,9 @@ def get_direction_message(command_input: str) -> int:
 if __name__ == '__main__':
     # TODO check the validity of robot config
 
-    net = Network("100.71.89.119")
+    net = Network("100.67.80.53")
     net.connect(default_config)
-    player = net.get_player()   # receive the initialized player robot
+    player = net.get_player()  # receive the initialized player robot
     print("You are player " + str(player.get_id()))
     print("Waiting for other players...")
 
@@ -126,10 +169,6 @@ if __name__ == '__main__':
         player.print_info()
         print("Vision: ")
         player.print_vision()
-        # maps are manually opened
-        # print("Map: ")
-        # player.print_map()
-
         print("Round " + str(round_count) + "  Please select your move:")
 
         # get player input
@@ -139,14 +178,15 @@ if __name__ == '__main__':
         while not valid_command:
             command_type = input(
                 input_code.MOVE + ": move  " + input_code.SENSE + ": sense  " + input_code.FIRE + ": fire  " + input_code.GADGET + " gadget" + "   (m: display map)")
-            if command_type == input_code.MOVE:    # receive movement command
+            if command_type == input_code.MOVE:  # receive movement command
                 result = select_move_command(net)
             elif command_type == input_code.SENSE:  # receive sensor command
                 result = select_sense_command(net)
-            elif command_type == 'm':
+            elif command_type == input_code.FIRE:  # receive fire command
+                result = select_fire_command(net)
+            elif command_type == 'm':  # open map
                 print("Map: ")
                 player.print_map()
-
             else:
                 print("Invalid Command")
             if result is not None:
