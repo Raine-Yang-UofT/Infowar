@@ -163,6 +163,13 @@ if __name__ == '__main__':
 
     # the game loop
     while True:
+        # end client if game is over
+        if player.HP <= 0:
+            print("You are dead, game over")
+            # send disconnect message to server
+            net.send(Message(net.get_player().get_id(), message.TYPE_DISCONNECT, message.DISCONNECT, None, -1))
+            break
+
         round_count += 1
         # print robot status and information
         print(player.display_status())

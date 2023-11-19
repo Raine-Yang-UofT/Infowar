@@ -33,6 +33,7 @@ RIGHT = 3
 Message Types
 """
 TYPE_CONNECT = 1
+TYPE_DISCONNECT = 2
 TYPE_MOVE = 10
 TYPE_FIRE = 11
 TYPE_SENSE = 12
@@ -42,6 +43,7 @@ TYPE_GADGET = 13
 Message Commands
 """
 CONNECT = 1
+DISCONNECT = 2
 MOVE = 100
 # sensor message
 SENSE_SOUND = 200

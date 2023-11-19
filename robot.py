@@ -9,6 +9,11 @@ from Configurations.game_config import FIELD_ROW, FIELD_COL
 import random
 
 
+# different robot states
+STATE_NORMAL = 1
+STATE_DEAD = 2
+
+
 def print_list_helper(lst: list[list]) -> None:
     """
     Helper function, print a 2D list
@@ -49,6 +54,7 @@ class Robot(IDisplayable, IDamageable):
         """
         # the id assigned to player and game
         self.player_id = player_id
+        self.state = STATE_NORMAL
 
         # extract base configuration
         self.max_HP = robot_config.HP
@@ -223,4 +229,6 @@ class Robot(IDisplayable, IDamageable):
 
         self.receive_info("Receives damage!")
 
-        # TODO: check if player is dead
+        if self.HP <= 0:
+            self.state = STATE_DEAD
+            self.receive_info("Robot destroyed!")

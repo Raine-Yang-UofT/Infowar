@@ -25,7 +25,7 @@ class Game:
         self.num_players = num_players
         self.battlefield = Battlefield(game_config.FIELD_ROW, game_config.FIELD_COL)
         self.sensors = robot_sensors.RobotSensor(self.battlefield)  # the sensors in the game
-        self.weapons = robot_weapons.RobotWeapons(self.battlefield) # the weapons in the game
+        self.weapons = robot_weapons.RobotWeapons(self.battlefield)  # the weapons in the game
         self.battlefield.initialize_field(game_config.BARRICADE_COVERAGE, game_config.HARD_BARRICADE_COVERAGE, game_config.BARRICADE_HP_RANGE,
                                           game_config.BARRICADE_ARMOR_RANGE)
         self.players = {}  # the dict of all players
@@ -111,6 +111,18 @@ class Game:
         robot.update_map(vision)
         robot.update_vision(vision)
 
+    def remove_playe(self, player_id: int) -> None:
+        """
+        Remove a player from the game
+
+        :param player_id: the id of player
+        :return: None
+        """
+        # remove player from field
+        self.battlefield.get_grid(self.players[player_id].get_pos()[0], self.players[player_id].get_pos()[1]).change_occupant(None)
+        # remove player from game
+        self.players.pop(player_id)
+
 
 # test methods: print battlefield status to terminal
 def print_field(b):
@@ -184,7 +196,12 @@ class MessageCenter:
                 self.game.sensor_controller.receive_message(player_message)
             elif player_message.type == message.TYPE_FIRE:
                 self.game.weapon_controller.receive_message(player_message)
-            # TODO Handle more message types
+            elif player_message.type == message.TYPE_GADGET:
+                # TODO handle gadget message
+                pass
+            elif player_message.type == message.TYPE_DISCONNECT:
+                self.num_players -= 1
+                self.game.remove_playe(player_message.source)
             else:
                 print("Unidentified Message Type!")
 
