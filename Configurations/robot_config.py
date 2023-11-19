@@ -4,7 +4,6 @@ The configurations for robots, sensors, weapons, and gadgets
 from dataclasses import dataclass
 import Items.sensors as sensors
 import Items.weapons as weapons
-import Framework.message as message
 
 
 @dataclass
@@ -12,7 +11,6 @@ class Armor:
     """
     configurations for robot armor
 
-    Representative invariant:
         - max_armor: the maximum armor value
         - armor_reduction_rate: the probably that armor decreases after each damage
         - armor_protection: the percentage of damage absorbed by armor
@@ -27,7 +25,6 @@ class RobotConfig:
     """
     configurations for robot
 
-    Representative invariables:
         - HP: the robot's HP
         - armor: the robot's armor
         - move_sound: the sound generated when robot moves

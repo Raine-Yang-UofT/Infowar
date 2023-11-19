@@ -7,7 +7,6 @@ class StraightWeapon:
     """
     Configurations for straight-firing weapons
 
-    Representation invariants:
         - name: the name of weapon
         - damage: the damage information
         - accuracy: the accuracy of the weapon

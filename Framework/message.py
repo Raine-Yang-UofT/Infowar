@@ -7,7 +7,6 @@ class Message:
     """
     A message from client
 
-    Representation invariables:
         source: the id of the player who sends message
         type: the type of message
         command: the specific command player sends

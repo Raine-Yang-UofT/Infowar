@@ -3,7 +3,7 @@ The client end for communication
 """
 
 from network import Network
-from Configurations.robot_config import default_config, RobotConfig
+from Configurations.robot_config import default_config
 import message
 from message import Message
 import input_code
@@ -105,7 +105,8 @@ def select_fire_command(net: Network):
         return None
 
     # send message
-    return net.send(Message(net.get_player().get_id(), message.TYPE_FIRE, weapon.message, weapon, weapon.reaction_time))
+    # calculate priority: 100 - weapon.reaction_time
+    return net.send(Message(net.get_player().get_id(), message.TYPE_FIRE, weapon.message, weapon, max(0, 100 - weapon.reaction_time)))
 
 
 def select_weapon_parameters(weapon):
@@ -148,7 +149,7 @@ def get_direction_message(command_input: str) -> int:
 if __name__ == '__main__':
     # TODO check the validity of robot config
 
-    net = Network("100.67.80.53")
+    net = Network("100.71.84.117")
     net.connect(default_config)
     player = net.get_player()  # receive the initialized player robot
     print("You are player " + str(player.get_id()))
