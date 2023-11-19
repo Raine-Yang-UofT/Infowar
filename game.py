@@ -111,7 +111,7 @@ class Game:
         robot.update_map(vision)
         robot.update_vision(vision)
 
-    def remove_playe(self, player_id: int) -> None:
+    def remove_player(self, player_id: int) -> None:
         """
         Remove a player from the game
 
@@ -120,8 +120,7 @@ class Game:
         """
         # remove player from field
         self.battlefield.get_grid(self.players[player_id].get_pos()[0], self.players[player_id].get_pos()[1]).change_occupant(None)
-        # remove player from game
-        self.players.pop(player_id)
+        self.num_players -= 1
 
 
 # test methods: print battlefield status to terminal
@@ -201,7 +200,7 @@ class MessageCenter:
                 pass
             elif player_message.type == message.TYPE_DISCONNECT:
                 self.num_players -= 1
-                self.game.remove_playe(player_message.source)
+                self.game.remove_player(player_message.source)
             else:
                 print("Unidentified Message Type!")
 
