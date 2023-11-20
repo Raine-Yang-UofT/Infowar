@@ -32,7 +32,7 @@ class Network:
         try:
             self.client.connect(self.addr)  # connect client socket to server address
             self.client.send(pickle.dumps(robot_config))  # send robot configuration to server
-            self.player = pickle.loads(self.client.recv(2048 * 4))     # receive Robot object from server
+            self.player = pickle.loads(self.client.recv(2048 * 16))     # receive Robot object from server
         except Exception as e:
             print(e)
             pass
@@ -46,8 +46,22 @@ class Network:
         """
         try:
             self.client.send(pickle.dumps(data))   # send client command
-            self.player = pickle.loads(self.client.recv(2048 * 4))
-            return self.player     # receive Robot object from server
+            # self.player = pickle.loads(self.client.recv(2048 * 16))
+            data = b""
+            while True:
+                packet = self.client.recv(2048)
+                if not packet:
+                    break
+                data += packet
+
+                # Check if a complete pickle object has been received
+                try:
+                    self.player = pickle.loads(data)
+                    return self.player  # Return the unpickled object if successful
+                except pickle.UnpicklingError:
+                    continue  # Incomplete object, continue receiving data
+
+            return None  # Return None if no complete object is received
         except socket.error as e:
             print(e)
 

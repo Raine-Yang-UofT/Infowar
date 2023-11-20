@@ -6,7 +6,7 @@ from robot import Robot
 from game import Game
 import message
 
-server = "100.71.84.117"  # the server's address, currently local address
+server = "100.67.90.144"  # the server's address, currently local address
 port = 5555  # the port for connection
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -39,7 +39,7 @@ def threaded_client(conn, player_id: int, game_id: int):
     print("start new thread")
 
     # receive robot configuration
-    config = pickle.loads(conn.recv(2048 * 4))
+    config = pickle.loads(conn.recv(2048 * 16))
     player = Robot(config, player_id)
     current_game.add_player(player, player_id)  # add player to field
     conn.send(pickle.dumps(player))
@@ -49,14 +49,14 @@ def threaded_client(conn, player_id: int, game_id: int):
         pass
 
     # send client's robot when all players join the game
-    if pickle.loads(conn.recv(2048)).type == message.TYPE_CONNECT:
+    if pickle.loads(conn.recv(2048 * 16)).type == message.TYPE_CONNECT:
         conn.send(pickle.dumps(current_game.get_player(player_id)))
 
     # the game loop
     while True:
         try:
             # receive client message
-            client_message = pickle.loads(conn.recv(2048 * 4))  # read client command
+            client_message = pickle.loads(conn.recv(2048 * 16))  # read client command
             current_game.message_center.receive_message(client_message)  # add message to message center
             print("receive client message")
 
