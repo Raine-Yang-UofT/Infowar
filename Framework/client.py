@@ -1,6 +1,15 @@
 """
 The client end for communication
 """
+import sys
+import os
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+sys.path.append(parent_dir)
+sys.path.append(os.path.join(parent_dir, 'Configurations'))
+sys.path.append(os.path.join(parent_dir, 'Items'))
+print(sys.path)
 
 from network import Network
 from Configurations.robot_config import default_config
@@ -106,7 +115,8 @@ def select_fire_command(net: Network):
 
     # send message
     # calculate priority: 100 - weapon.reaction_time
-    return net.send(Message(net.get_player().get_id(), message.TYPE_FIRE, weapon.message, weapon, max(0, 100 - weapon.reaction_time)))
+    return net.send(Message(net.get_player().get_id(), message.TYPE_FIRE, weapon.message, weapon,
+                            max(0, 100 - weapon.reaction_time)))
 
 
 def select_weapon_parameters(weapon):
@@ -123,7 +133,7 @@ def select_weapon_parameters(weapon):
         if command_input not in [input_code.UP, input_code.DOWN, input_code.LEFT, input_code.RIGHT]:
             print("Invalid Command")
             raise Exception()
-        weapon.message = get_direction_message(command_input)   # update weapon message as firing direction
+        weapon.message = get_direction_message(command_input)  # update weapon message as firing direction
 
 
 def get_direction_message(command_input: str) -> int:
