@@ -6,6 +6,7 @@ from interface import IDamageable
 from Items import weapons
 import Framework.message as message
 import random
+from dataclasses import replace
 
 
 class RobotWeapons:
@@ -67,3 +68,41 @@ class RobotWeapons:
             # check whether the target is hit
             if random.random() <= accuracy:
                 self.battlefield.get_grid(px, py).get_occupant().get_damage(damage)
+
+    def shoot_projectile_weapon(self, x: int, y: int, weapon: weapons.ProjectileWeapon):
+        """
+        Fire a projectile weapon from (x, y) at a given direction and range. The weapon deals
+        certain damage to the target hit
+
+        :param x: the x-coordinate of starting point
+        :param y: the y-coordinate of the starting point
+        :param weapon: the weapon used
+        :return: None
+        """
+        # generate sound and heat at starting position
+        self.battlefield.generate_sound(x, y, weapon.sound_emission)
+        self.battlefield.generate_heat(x, y, weapon.heat_emission)
+
+        # set target location
+        px, py = x, y
+        if weapon.message[0] == message.UP:
+            py -= weapon.message[1]
+        elif weapon.message[0] == message.DOWN:
+            py += weapon.message[1]
+        elif weapon.message[0] == message.LEFT:
+            px -= weapon.message[1]
+        elif weapon.message[0] == message.RIGHT:
+            px += weapon.message[1]
+
+        # examine the grids in the range
+        for i in range(0, len(self.battlefield.field[0])):
+            for j in range(0, len(self.battlefield.field)):
+                if (i - px) ** 2 + (j - py) ** 2 <= weapon.impact_radius ** 2:
+                    # prevent index out of bound
+                    if i < 0 or i >= len(self.battlefield.field[0]) or j < 0 or j >= len(self.battlefield.field):
+                        continue
+                    # deals damage to the target
+                    if isinstance(self.battlefield.get_grid(i, j).get_occupant(), IDamageable):
+                        # calculate damage decay
+                        net_damage = weapon.damage.damage - weapon.impact_damage_decay * int(((i - x) ** 2 + (j - y) ** 2) ** 0.5)
+                        self.battlefield.get_grid(i, j).get_occupant().get_damage(replace(weapon.damage, damage=net_damage))

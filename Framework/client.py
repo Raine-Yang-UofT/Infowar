@@ -3,13 +3,13 @@ The client end for communication
 """
 import sys
 import os
+from dataclasses import replace
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 sys.path.append(parent_dir)
 sys.path.append(os.path.join(parent_dir, 'Configurations'))
 sys.path.append(os.path.join(parent_dir, 'Items'))
-print(sys.path)
 
 from network import Network
 from Configurations.robot_config import default_config
@@ -55,8 +55,7 @@ def select_sense_command(net: Network):
         prompt += str(i + 1) + ": " + player.sensors[i].name + "  "
     try:
         index = int(input(prompt)) - 1
-        sensor = player.sensors[index]
-        select_sensor_parameters(sensor)  # input additional parameters for sensor
+        sensor = select_sensor_parameters(player.sensors[index])  # input additional parameters for sensor
     except Exception as e:  # prevent invalid index
         print("Invalid Command")
         print(e)
@@ -72,7 +71,7 @@ def select_sensor_parameters(sensor):
     Prompt player to add paramters to sensor command (is required)
 
     :param sensor: the sensor dataclass
-    :return: None
+    :return: a new sensor object
     """
     if sensor.message == message.SENSE_DRONE:
         command = input("Enter (w, a, s, d) to map the path of drone: ")
@@ -82,7 +81,7 @@ def select_sensor_parameters(sensor):
             raise Exception()
         # update drone path
         print("drone path updated")
-        sensor.commands = command
+        return replace(sensor, commands=command)
     elif sensor.message == message.SENSE_SCOUT_CAR:
         direction = input("Enter (w, a, s, d) to map the direction of scout car: ")
         if direction not in ['w', 'a', 's', 'd']:
@@ -90,7 +89,10 @@ def select_sensor_parameters(sensor):
             raise Exception()
         # update scout car direction
         print("scout car direction updated")
-        sensor.direction = direction
+        return replace(sensor, direction=direction)
+    else:
+        # no additional parameters for sensors
+        return sensor
 
 
 def select_fire_command(net: Network):
@@ -106,8 +108,7 @@ def select_fire_command(net: Network):
         prompt += str(i + 1) + ": " + player.weapons[i].name + "  "
     try:
         index = int(input(prompt)) - 1
-        weapon = player.weapons[index]
-        select_weapon_parameters(weapon)  # input additional parameters for weapon
+        weapon = select_weapon_parameters(player.weapons[index])  # input additional parameters for weapon
     except Exception as e:  # prevent invalid index
         print("Invalid Command")
         print(e)
@@ -124,7 +125,7 @@ def select_weapon_parameters(weapon):
     Prompt player to add paramters to weapon command (is required)
 
     :param weapon: the weapon selected
-    :return: None
+    :return: the updated weapon
     """
     # select direction for straight-firing weapons
     if isinstance(weapon, weapons.StraightWeapon):
@@ -133,7 +134,21 @@ def select_weapon_parameters(weapon):
         if command_input not in [input_code.UP, input_code.DOWN, input_code.LEFT, input_code.RIGHT]:
             print("Invalid Command")
             raise Exception()
-        weapon.message = get_direction_message(command_input)  # update weapon message as firing direction
+        return replace(weapon, message=get_direction_message(command_input))  # update weapon message as firing direction
+    elif isinstance(weapon, weapons.ProjectileWeapon):
+        command_input = input("Select the direction of firing:" +
+                              input_code.UP + ": up  " + input_code.DOWN + ": down  " + input_code.LEFT + ": left  " + input_code.RIGHT + ": right")
+        range_input = int(input(
+            "Select the range of firing: (range between " + str(weapon.min_launch_range) + " - " + str(
+                weapon.max_launch_range) + ")"))
+        if ((command_input not in [input_code.UP, input_code.DOWN, input_code.LEFT, input_code.RIGHT])
+                or range_input < weapon.min_launch_range or range_input > weapon.max_launch_range):
+            print("Invalid Command")
+            raise Exception()
+        return replace(weapon, message=(get_direction_message(command_input), range_input))  # update weapon message as firing direction and range
+    else:
+        # no additional parameters for weapons
+        return weapon
 
 
 def get_direction_message(command_input: str) -> int:

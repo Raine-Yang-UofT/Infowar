@@ -353,6 +353,7 @@ class WeaponController:
 
         if isinstance(weapon, weapons.StraightWeapon):
             self.game.weapons.shoot_straight_weapon(robot.get_pos()[0], robot.get_pos()[1], weapon)
-        # TODO Add more weapon types
+        elif isinstance(weapon, weapons.ProjectileWeapon):
+            self.game.weapons.shoot_projectile_weapon(robot.get_pos()[0], robot.get_pos()[1], weapon)
         else:
             print("unidentified weapon type")

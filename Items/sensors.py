@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from Framework import message
 
 
-@dataclass
+@dataclass(frozen=True)
 class SignalSensor:
     """
     Detect signal at a square region with a given radius around player
@@ -19,7 +19,7 @@ class SignalSensor:
     message: int
 
 
-@dataclass
+@dataclass(frozen=True)
 class Lidar:
     """
     Detect a square range around player and update the map
@@ -37,7 +37,7 @@ class Lidar:
     message: int
 
 
-@dataclass
+@dataclass(frozen=True)
 class Drone:
     """
     Move to a certain location based on player's command
@@ -62,7 +62,7 @@ class Drone:
     location: tuple[int, int]
 
 
-@dataclass
+@dataclass(frozen=True)
 class ScoutCar:
     """
     Move to a certain location based on player's command

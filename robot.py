@@ -223,7 +223,7 @@ class Robot(IDisplayable, IDamageable):
             self.HP -= int(damage.damage * (1 - self.armor_equip.armor_protection))
             # check if armor decreases
             if random.random() <= self.armor_equip.armor_reduction_rate:
-                self.armor -= 1
+                self.armor = max(0, self.armor - 1)
         else:   # armor is penetrated
             self.HP -= damage.damage
 
