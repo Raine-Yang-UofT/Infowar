@@ -32,5 +32,5 @@ class StraightWeapon:
 assulter_rifle = StraightWeapon("assulter rifle", dmg.Damage(80, 3), 0.75, 0.03, 8, 6, 4, 40, 0)
 submachine_gun = StraightWeapon("submachine gun", dmg.Damage(70, 2), 0.85, 0.02, 6, 5, 3, 65, 0)
 pistol = StraightWeapon("pistol", dmg.Damage(50, 2), 0.95, 0.02, 5, 4, 2, 90, 0)
-sniper_rifle = StraightWeapon("sniper_rifle", dmg.Damage(100, 4), 0.2, -0.05, 12, 8, 5, 20, 0)
+sniper_rifle = StraightWeapon("sniper_rifle", dmg.Damage(90, 4), 0.2, -0.05, 12, 8, 5, 20, 0)
 shotgun = StraightWeapon("shotgun", dmg.Damage(100, 0), 1, 0.1, 4, 7, 4, 30, 0)
