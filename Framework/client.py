@@ -21,6 +21,12 @@ from Items import weapons
 INFINITY = 1000000000  # a psudo-infinity value for sensor priority
 
 
+class InvalidCommandException(Exception):
+
+    def __str__(self):
+        return 'Invalid Command'
+
+
 def select_move_command(net: Network):
     """
     Prompt the player to send movement command
@@ -78,7 +84,7 @@ def select_sensor_parameters(sensor):
         if not (all([c in ['w', 'a', 's', 'd'] for c in command]) and len(command) <= sensor.longest_range):
             print("Invalid drone path, make sure the path only contains (w, a, s, d) and is shorter than " + str(
                 sensor.longest_range) + " steps")
-            raise Exception()
+            raise InvalidCommandException()
         # update drone path
         print("drone path updated")
         return replace(sensor, commands=command)
@@ -86,7 +92,7 @@ def select_sensor_parameters(sensor):
         direction = input("Enter (w, a, s, d) to map the direction of scout car: ")
         if direction not in ['w', 'a', 's', 'd']:
             print("Invalid scout car direction, make sure the direction is one of (w, a, s, d)")
-            raise Exception()
+            raise InvalidCommandException()
         # update scout car direction
         print("scout car direction updated")
         return replace(sensor, direction=direction)
@@ -132,19 +138,22 @@ def select_weapon_parameters(weapon):
         command_input = input("Select the direction of firing:" +
                               input_code.UP + ": up  " + input_code.DOWN + ": down  " + input_code.LEFT + ": left  " + input_code.RIGHT + ": right")
         if command_input not in [input_code.UP, input_code.DOWN, input_code.LEFT, input_code.RIGHT]:
-            print("Invalid Command")
-            raise Exception()
+            raise InvalidCommandException()
         return replace(weapon, message=get_direction_message(command_input))  # update weapon message as firing direction
     elif isinstance(weapon, weapons.ProjectileWeapon):
         command_input = input("Select the direction of firing:" +
                               input_code.UP + ": up  " + input_code.DOWN + ": down  " + input_code.LEFT + ": left  " + input_code.RIGHT + ": right")
-        range_input = int(input(
+        range_input = input(
             "Select the range of firing: (range between " + str(weapon.min_launch_range) + " - " + str(
-                weapon.max_launch_range) + ")"))
+                weapon.max_launch_range) + ")")
+        if range_input.isdigit():
+            range_input = int(range_input)
+        else:
+            raise InvalidCommandException()
+
         if ((command_input not in [input_code.UP, input_code.DOWN, input_code.LEFT, input_code.RIGHT])
                 or range_input < weapon.min_launch_range or range_input > weapon.max_launch_range):
-            print("Invalid Command")
-            raise Exception()
+            raise InvalidCommandException()
         return replace(weapon, message=(get_direction_message(command_input), range_input))  # update weapon message as firing direction and range
     else:
         # no additional parameters for weapons
@@ -174,7 +183,7 @@ def get_direction_message(command_input: str) -> int:
 if __name__ == '__main__':
     # TODO check the validity of robot config
 
-    net = Network("100.67.90.179")
+    net = Network("100.67.91.68")
     net.connect(default_config)
     player = net.get_player()  # receive the initialized player robot
     print("You are player " + str(player.get_id()))

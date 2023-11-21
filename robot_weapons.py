@@ -104,5 +104,5 @@ class RobotWeapons:
                     # deals damage to the target
                     if isinstance(self.battlefield.get_grid(i, j).get_occupant(), IDamageable):
                         # calculate damage decay
-                        net_damage = weapon.damage.damage - weapon.impact_damage_decay * int(((i - x) ** 2 + (j - y) ** 2) ** 0.5)
+                        net_damage = weapon.damage.damage - weapon.impact_damage_decay * int(((i - px) ** 2 + (j - py) ** 2) ** 0.5)
                         self.battlefield.get_grid(i, j).get_occupant().get_damage(replace(weapon.damage, damage=net_damage))
