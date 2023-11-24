@@ -82,7 +82,7 @@ class RobotSensor:
 
         return self.display_grid_helper(x, y, lidar.radius)
 
-    def display_drone_vision(self, x: int, y: int, drone: sensors.Drone) -> list[list[str]]:
+    def display_drone_vision(self, x: int, y: int, drone: sensors.Drone) -> [list[list[str]], tuple[int, int]]:
         """
         Show the drone scanning started from (x, y)
         Emit sound and heat signal around (x, y)
@@ -107,12 +107,9 @@ class RobotSensor:
         self.battlefield.generate_sound(x, y, drone.sound_emission)
         self.battlefield.generate_heat(x, y, drone.heat_emission)
 
-        # update drone location record
-        drone.location = (drone_x, drone_y)
+        return self.display_grid_helper(drone_x, drone_y, drone.radius), (drone_x, drone_y)
 
-        return self.display_grid_helper(drone_x, drone_y, drone.radius)
-
-    def display_scout_car_vision(self, x: int, y: int, scout_car: sensors.ScoutCar) -> list[list[str]]:
+    def display_scout_car_vision(self, x: int, y: int, scout_car: sensors.ScoutCar) -> [list[list[str]], tuple[int, int]]:
         """
         Show the scout car scanning started from (x, y)
         Emit sound and heat signal around (x, y)
@@ -155,7 +152,4 @@ class RobotSensor:
         self.battlefield.generate_sound(x, y, scout_car.sound_emission)
         self.battlefield.generate_heat(x, y, scout_car.heat_emission)
 
-        # update drone location record
-        scout_car.location = (car_x, car_y)
-
-        return self.display_grid_helper(car_x, car_y, scout_car.radius)
+        return self.display_grid_helper(car_x, car_y, scout_car.radius), (car_x, car_y)

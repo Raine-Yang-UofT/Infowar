@@ -5,13 +5,8 @@ from interface import IDisplayable, IDamageable
 from damage import Damage
 from Configurations.robot_config import RobotConfig
 from grid import Grid
-from Configurations.game_config import FIELD_ROW, FIELD_COL
+import Configurations.game_config as game_config
 import random
-
-
-# different robot states
-STATE_NORMAL = 1
-STATE_DEAD = 2
 
 
 def print_list_helper(lst: list[list]) -> None:
@@ -54,7 +49,7 @@ class Robot(IDisplayable, IDamageable):
         """
         # the id assigned to player and game
         self.player_id = player_id
-        self.state = STATE_NORMAL
+        self.state = game_config.STATE_NORMAL
 
         # extract base configuration
         self.max_HP = robot_config.HP
@@ -79,7 +74,7 @@ class Robot(IDisplayable, IDamageable):
         # the robot's information list
         self.info_list = []
         # the robot's local map
-        self.map = [["*" for _ in range(0, FIELD_COL)] for _ in range(0, FIELD_ROW)]
+        self.map = [["*" for _ in range(0, game_config.FIELD_COL)] for _ in range(0, game_config.FIELD_ROW)]
         # the robot's current vision
         self.vision = []
 
@@ -107,6 +102,14 @@ class Robot(IDisplayable, IDamageable):
         :return: self.player_id
         """
         return self.player_id
+
+    def get_state(self) -> int:
+        """
+        Return the state of robot
+
+        :return: sekf.state
+        """
+        return self.state
 
     def set_pos(self, grid: Grid) -> None:
         """
@@ -230,5 +233,5 @@ class Robot(IDisplayable, IDamageable):
         self.receive_info("Receives damage!")
 
         if self.HP <= 0:
-            self.state = STATE_DEAD
+            self.state = game_config.STATE_DEAD  # change robot state to dead
             self.receive_info("Robot destroyed!")

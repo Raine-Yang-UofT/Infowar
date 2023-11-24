@@ -66,3 +66,4 @@ shotgun = StraightWeapon("shotgun", dmg.Damage(100, 0), 1, 0.15, 4, 7, 4, 30, 0)
 # projectile weapons
 impact_grenade = ProjectileWeapon("impact grenade", dmg.Damage(40, 0), 4, 6, 3, 10, 4, 2, 60, (0, 0))
 frag_grenade = ProjectileWeapon("frag grenade", dmg.Damage(60, 2), 3, 6, 2, 20, 5, 3, 30, (0, 0))
+breaching_grenade = ProjectileWeapon("breaching grenade", dmg.Damage(10, 5), 3, 5, 2, 0, 5, 2, 80, (0, 0))
