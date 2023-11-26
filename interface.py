@@ -34,3 +34,12 @@ class IDamageable:
         """
         # Override in children class
 
+    def get_name(self) -> str:
+        """
+        Return the name of the object
+
+        :return: the name of the object
+        """
+        # Override in children class
+        return 'the get_name method is not implemented in child class'
+

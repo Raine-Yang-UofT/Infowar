@@ -35,7 +35,9 @@ class StraightWeapon:
         :param robot: the robot that fires the weapon
         :return: None
         """
-        weapons.shoot_straight_weapon(robot.get_pos()[0], robot.get_pos()[1], self)
+        result = weapons.shoot_straight_weapon(robot.get_pos()[0], robot.get_pos()[1], self)
+        if result is not None:
+            robot.receive_info(result)
 
 
 @dataclass(frozen=True)
@@ -73,7 +75,10 @@ class ProjectileWeapon:
         :param robot: the robot that fires the weapon
         :return: None
         """
-        weapons.shoot_projectile_weapon(robot.get_pos()[0], robot.get_pos()[1], self)
+        results = weapons.shoot_projectile_weapon(robot.get_pos()[0], robot.get_pos()[1], self)
+        if results is not None:
+            for info in results:
+                robot.receive_info(info)
 
 
 # weapons

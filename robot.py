@@ -103,6 +103,14 @@ class Robot(IDisplayable, IDamageable):
         """
         return self.player_id
 
+    def get_name(self) -> str:
+        """
+        Return the name of the robot
+
+        :return: the name of robot
+        """
+        return 'player ' + str(self.player_id)
+
     def get_state(self) -> int:
         """
         Return the state of robot

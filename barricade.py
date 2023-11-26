@@ -34,6 +34,14 @@ class Barricade(IDisplayable, IDamageable):
         """
         self.grid.remove_occupant()  # erase the barricade
 
+    def get_name(self) -> str:
+        """
+        Return the name of the barricade
+
+        :return: 'barricade'
+        """
+        return 'barricade'
+
 
 class HardBarricade(IDisplayable, IDamageable):
 
@@ -64,3 +72,11 @@ class HardBarricade(IDisplayable, IDamageable):
             self.HP -= damage.damage
             if self.HP <= 0:
                 self.grid.remove_occupant()  # erase the hard barricade
+
+    def get_name(self) -> str:
+        """
+        Return the name of the barricade
+
+        :return: 'hard barricade'
+        """
+        return 'hard barricade'
