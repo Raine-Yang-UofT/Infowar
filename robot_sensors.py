@@ -44,7 +44,7 @@ class RobotSensor:
 
         return result
 
-    def display_signal_vision(self, x: int, y: int, sensor: sensors.SignalSensor) -> list[list]:
+    def display_signal_vision(self, x: int, y: int, sensor) -> list[list]:
         """
         Show the sound/heat signal centered at (x, y) at a given radius
 

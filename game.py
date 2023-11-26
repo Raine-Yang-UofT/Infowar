@@ -9,7 +9,6 @@ from Framework.message import Message
 from queue import PriorityQueue
 from Configurations import game_config
 import robot_sensors
-from Items import weapons
 
 
 class Game:
@@ -303,37 +302,8 @@ class SensorController:
         if robot.get_state() != game_config.STATE_NORMAL:
             return
 
-        if sensor.message == message.SENSE_SOUND:  # get the sound signal
-            sound_signal = self.game.sensors.display_signal_vision(robot.get_pos()[0], robot.get_pos()[1], sensor)
-            robot.receive_info("Sound signal detected at (" + str(robot.get_pos()[0]) + ", " + str(robot.get_pos()[1]) + ")")
-            robot.receive_info("Sound signal: ")
-            robot.receive_info(sound_signal)
-        elif sensor.message == message.SENSE_HEAT:
-            # get the heat signal
-            heat_signal = self.game.sensors.display_signal_vision(robot.get_pos()[0], robot.get_pos()[1], sensor)
-            robot.receive_info("Heat signal detected at (" + str(robot.get_pos()[0]) + ", " + str(robot.get_pos()[1]) + ")")
-            robot.receive_info("Heat signal: ")
-            robot.receive_info(heat_signal)
-        elif sensor.message == message.SENSE_LIDAR:
-            # get the lider signal
-            lidar_view = self.game.sensors.display_lidar_vision(robot.get_pos()[0], robot.get_pos()[1], sensor)
-            robot.receive_info("Complete lidar scanning at (" + str(robot.get_pos()[0]) + ", " + str(robot.get_pos()[1]) + ")")
-            robot.receive_info(lidar_view)
-            robot.update_map(lidar_view)
-        elif sensor.message == message.SENSE_DRONE:
-            # get the drone signal
-            drone_view = self.game.sensors.display_drone_vision(robot.get_pos()[0], robot.get_pos()[1], sensor)
-            robot.receive_info("Drone scanning at (" + str(drone_view[1][0]) + ", " + str(drone_view[1][1]) + ")")
-            robot.receive_info(drone_view[0])
-            robot.update_map(drone_view[0])
-        elif sensor.message == message.SENSE_SCOUT_CAR:
-            # get the scout car signal
-            scout_car_view = self.game.sensors.display_scout_car_vision(robot.get_pos()[0], robot.get_pos()[1], sensor)
-            robot.receive_info("Scout car scanning at (" + str(scout_car_view[1][0]) + ", " + str(scout_car_view[1][1]) + ")")
-            robot.receive_info(scout_car_view[0])
-            robot.update_map(scout_car_view[0])
-        else:  # TODO: add more sensor types
-            print("unidentified sensor type")
+        # use the sensor
+        sensor.detect_signal(self.game.sensors, robot)
 
 
 class WeaponController:
@@ -362,9 +332,4 @@ class WeaponController:
         if robot.get_state() != game_config.STATE_NORMAL:
             return
 
-        if isinstance(weapon, weapons.StraightWeapon):
-            self.game.weapons.shoot_straight_weapon(robot.get_pos()[0], robot.get_pos()[1], weapon)
-        elif isinstance(weapon, weapons.ProjectileWeapon):
-            self.game.weapons.shoot_projectile_weapon(robot.get_pos()[0], robot.get_pos()[1], weapon)
-        else:
-            print("unidentified weapon type")
+        weapon.fire_weapon(self.game.weapons, robot)

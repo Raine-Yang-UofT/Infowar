@@ -27,6 +27,16 @@ class StraightWeapon:
     reaction_time: int
     message: int
 
+    def fire_weapon(self, weapons, robot) -> None:
+        """
+        Fire straight weapons from robot
+
+        :param weapons: the RobotWeapons observer class
+        :param robot: the robot that fires the weapon
+        :return: None
+        """
+        weapons.shoot_straight_weapon(robot.get_pos()[0], robot.get_pos()[1], self)
+
 
 @dataclass(frozen=True)
 class ProjectileWeapon:
@@ -55,13 +65,23 @@ class ProjectileWeapon:
     reaction_time: int
     message: tuple[int, int]
 
+    def fire_weapon(self, weapons, robot) -> None:
+        """
+        Fire projectile weapons from robot
+
+        :param weapons: the RobotWeapons observer class
+        :param robot: the robot that fires the weapon
+        :return: None
+        """
+        weapons.shoot_projectile_weapon(robot.get_pos()[0], robot.get_pos()[1], self)
+
 
 # weapons
 assulter_rifle = StraightWeapon("assulter rifle", dmg.Damage(80, 3), 0.75, 0.03, 8, 6, 4, 40, 0)
 submachine_gun = StraightWeapon("submachine gun", dmg.Damage(70, 2), 0.9, 0.03, 6, 5, 3, 65, 0)
 pistol = StraightWeapon("pistol", dmg.Damage(60, 2), 0.95, 0.02, 5, 4, 2, 90, 0)
-sniper_rifle = StraightWeapon("sniper_rifle", dmg.Damage(100, 4), 0.2, -0.05, 12, 8, 5, 20, 0)
-shotgun = StraightWeapon("shotgun", dmg.Damage(100, 0), 1, 0.15, 4, 7, 4, 30, 0)
+sniper_rifle = StraightWeapon("sniper_rifle", dmg.Damage(100, 4), 0.2, -0.03, 12, 8, 5, 10, 0)
+shotgun = StraightWeapon("shotgun", dmg.Damage(100, 1), 1, 0.15, 4, 7, 4, 30, 0)
 
 # projectile weapons
 impact_grenade = ProjectileWeapon("impact grenade", dmg.Damage(40, 0), 4, 6, 3, 10, 4, 2, 60, (0, 0))

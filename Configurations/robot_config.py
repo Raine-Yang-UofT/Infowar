@@ -44,15 +44,20 @@ class RobotConfig:
 
 
 # armors
-standard_composite_armor = Armor(3, 0.4, 0.6)
 light_composite_armor = Armor(2, 0.4, 0.6)
-heavy_composite_armor = Armor(4, 0.4, 0.6)
-standard_porcelain_armor = Armor(3, 0.6, 0.8)
+standard_composite_armor = Armor(3, 0.4, 0.6)
+improved_composite_armor = Armor(4, 0.4, 0.6)
+heavy_composite_armor = Armor(5, 0.4, 0.6)
+
 light_porcelain_armor = Armor(2, 0.6, 0.8)
-heavy_porcelain_armor = Armor(4, 0.6, 0.8)
-standard_steel_armor = Armor(3, 0.2, 0.4)
+standard_porcelain_armor = Armor(3, 0.6, 0.8)
+improved_porcelain_armor = Armor(4, 0.6, 0.8)
+heavy_porcelain_armor = Armor(5, 0.6, 0.8)
+
 light_steel_armor = Armor(2, 0.2, 0.4)
-heavy_steel_armor = Armor(4, 0.2, 0.4)
+standard_steel_armor = Armor(3, 0.2, 0.4)
+improved_steel_armor = Armor(4, 0.2, 0.4)
+heavy_steel_armor = Armor(5, 0.2, 0.4)
 
 
 # a default configuration for testing
@@ -63,6 +68,6 @@ default_config = RobotConfig(
     move_heat=3,
     move_speed=50,
     sensors=[sensors.heat_sensor, sensors.sound_sensor, sensors.lidar, sensors.drone, sensors.scout_car],
-    weapons=[weapons.assulter_rifle, weapons.submachine_gun, weapons.pistol, weapons.sniper_rifle, weapons.shotgun, weapons.impact_grenade, weapons.frag_grenade],
+    weapons=[weapons.assulter_rifle, weapons.submachine_gun, weapons.pistol, weapons.sniper_rifle, weapons.shotgun, weapons.impact_grenade, weapons.frag_grenade, weapons.breaching_grenade],
     gadgets=[]
 )
