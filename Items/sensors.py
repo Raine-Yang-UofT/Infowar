@@ -2,11 +2,13 @@
 Sensor items
 """
 from dataclasses import dataclass
-from Framework import message
+from dataclasses import replace
+from Framework import interface, message
+from Framework import input_code
 
 
 @dataclass(frozen=True)
-class SoundSensor:
+class SoundSensor(interface.ISensor):
     """
     Detect sound signal at a square region with a given radius around player
 
@@ -32,9 +34,17 @@ class SoundSensor:
         robot.receive_info("Sound signal: ")
         robot.receive_info(sound_signal)
 
+    def select_sensor_parameter(self):
+        """
+        No additional parameters for sound sensor
+
+        :return: the parameter of the sensor
+        """
+        return self
+
 
 @dataclass(frozen=True)
-class HeatSensor:
+class HeatSensor(interface.ISensor):
     """
     Detect heat signal at a square region with a given radius around player
 
@@ -60,9 +70,17 @@ class HeatSensor:
         robot.receive_info("Heat signal: ")
         robot.receive_info(heat_signal)
 
+    def select_sensor_parameter(self):
+        """
+        No additional parameters for heat sensor
+
+        :return: the parameter of the sensor
+        """
+        return self
+
 
 @dataclass(frozen=True)
-class Lidar:
+class Lidar(interface.ISensor):
     """
     Detect a square range around player and update the map
 
@@ -92,9 +110,17 @@ class Lidar:
         robot.receive_info(lidar_view)
         robot.update_map(lidar_view)
 
+    def select_sensor_parameter(self):
+        """
+        No additional parameters for lidar
+
+        :return: the parameter of the sensor
+        """
+        return self
+
 
 @dataclass(frozen=True)
-class Drone:
+class Drone(interface.ISensor):
     """
     Move to a certain location based on player's command
     and detect a square region around the location
@@ -128,9 +154,24 @@ class Drone:
         robot.receive_info(drone_view[0])
         robot.update_map(drone_view[0])
 
+    def select_sensor_parameter(self):
+        """
+        Add additional parameters to drone
+
+        :return: the drone with updated parameters
+        """
+        command = input("Enter (w, a, s, d) to map the path of drone: ")
+        if not (all([c in ['w', 'a', 's', 'd'] for c in command]) and len(command) <= self.longest_range):
+            print("Invalid drone path, make sure the path only contains (w, a, s, d) and is shorter than " + str(
+                self.longest_range) + " steps")
+            raise input_code.InvalidCommandException()
+        # update drone path
+        print("drone path updated")
+        return replace(self, commands=command)
+
 
 @dataclass(frozen=True)
-class ScoutCar:
+class ScoutCar(interface.ISensor):
     """
     Move to a certain location based on player's command
     and detect a square region around the location
@@ -165,6 +206,20 @@ class ScoutCar:
             "Scout car scanning at (" + str(scout_car_view[1][0]) + ", " + str(scout_car_view[1][1]) + ")")
         robot.receive_info(scout_car_view[0])
         robot.update_map(scout_car_view[0])
+
+    def select_sensor_parameter(self):
+        """
+        Add additional parameters to scout car
+
+        :return: the scout car with updated parameters
+        """
+        direction = input("Enter (w, a, s, d) to map the direction of scout car: ")
+        if direction not in ['w', 'a', 's', 'd']:
+            print("Invalid scout car direction, make sure the direction is one of (w, a, s, d)")
+            raise input_code.InvalidCommandException()
+        # update scout car direction
+        print("scout car direction updated")
+        return replace(self, direction=direction)
 
 
 # sensor objects

@@ -1,7 +1,7 @@
 """
 The class for a player-controlled robot
 """
-from interface import IDisplayable, IDamageable
+from Framework.interface import IDisplayable, IDamageable
 from damage import Damage
 from Configurations.robot_config import RobotConfig
 from grid import Grid

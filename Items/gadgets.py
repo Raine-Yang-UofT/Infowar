@@ -22,4 +22,16 @@ class DeployableBarricade:
     message: int
     reaction_time: int
 
-    # TODO: implement gadget method
+    def use_gadget(self, gadgets, robot) -> None:
+        """
+        Deploy a hard barricade at the current position of the robot
+
+        :param gadgets: the RobotGadgets observer class
+        :param robot: the robot that uses the gadget
+        :return: None
+        """
+        robot.receive_info(gadgets.deploy_barricade(robot.get_pos()[0], robot.get_pos()[1], self))
+
+
+# gadget objects
+deployable_barricade = DeployableBarricade('deployable barricade', 200, 5, message.DEPLOYABLE_BARRICADE, 10)

@@ -5,7 +5,7 @@ import random
 import math
 
 from grid import Grid
-from interface import IDisplayable
+from Framework.interface import IDisplayable
 from barricade import Barricade
 from barricade import HardBarricade
 from robot import Robot

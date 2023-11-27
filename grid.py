@@ -1,7 +1,7 @@
 """
 A single grid in the game map
 """
-import interface
+from Framework import interface
 
 
 class Grid:
