@@ -1,3 +1,5 @@
 venv/
 .idea/
 **/__pycache__/
+Configurations/__pycache__/
+Items/__pycache__/
