@@ -51,7 +51,7 @@ def select_sense_command(net: Network):
     print("Select the sensor")
     prompt = ''
     for i in range(0, len(player.sensors)):
-        prompt += str(i + 1) + ": " + player.sensors[i].name + "  "
+        prompt += str(i + 1) + ": " + player.sensors[i].config.name + "  "
     try:
         index = int(input(prompt)) - 1
         sensor = player.sensors[index].select_sensor_parameter()  # input additional parameters for sensor
@@ -75,7 +75,7 @@ def select_fire_command(net: Network):
     print("Select the weapon")
     prompt = ''
     for i in range(0, len(player.weapons)):
-        prompt += str(i + 1) + ": " + player.weapons[i].name + "  "
+        prompt += str(i + 1) + ": " + player.weapons[i].config.name + "  "
     try:
         index = int(input(prompt)) - 1
         weapon = player.weapons[index].select_weapon_parameter()  # input additional parameters for weapon
@@ -87,13 +87,24 @@ def select_fire_command(net: Network):
     # send message
     # calculate priority: 100 - weapon.reaction_time
     return net.send(Message(net.get_player().get_id(), message.TYPE_FIRE, weapon.message, weapon,
-                            max(0, 100 - weapon.reaction_time)))
+                            max(0, 100 - weapon.config.reaction_time)))
+
+
+def select_gadget_command(net: Network):
+    """
+    Prompt the player to send gadget command
+
+    :param net: the network connection to server
+    :return: the robot object received from server
+    """
+    print("Select the gadget")
+    prompt = ''
 
 
 if __name__ == '__main__':
     # TODO check the validity of robot config
 
-    net = Network("100.67.80.163")
+    net = Network("100.67.91.89")
     net.connect(default_config)
     player = net.get_player()  # receive the initialized player robot
     print("You are player " + str(player.get_id()))
@@ -136,6 +147,10 @@ if __name__ == '__main__':
                 result = select_sense_command(net)
             elif command_type == input_code.FIRE:  # receive fire command
                 result = select_fire_command(net)
+            elif command_type == input_code.GADGET:  # receive gadget command
+                # result = select_gadget_command(net)
+                pass
+                # TODO: complete select_gadget_command
             elif command_type == 'm':  # open map
                 print("Map: ")
                 player.print_map()

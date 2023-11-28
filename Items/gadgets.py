@@ -1,12 +1,13 @@
 """
 gadget items
 """
-from dataclasses import dataclass
-from Framework import message
+from dataclasses import dataclass, replace
+from Framework import message, interface
+from Framework import input_code
 
 
 @dataclass(frozen=True)
-class DeployableBarricade:
+class DeployableBarricade(interface.IGadget):
     """
     A hard barricade that can be deployed on the ground. It can block straight-firing weapons and robots
 
@@ -31,6 +32,18 @@ class DeployableBarricade:
         :return: None
         """
         robot.receive_info(gadgets.deploy_barricade(robot.get_pos()[0], robot.get_pos()[1], self))
+
+    def select_gadget_parameter(self):
+        """
+        Select the direction to deploy the barricade
+
+        :return: a copy of gadget object with updated parameters
+        """
+        command_input = input("Select the direction to deploy barricade:" +
+                              input_code.UP + ": up  " + input_code.DOWN + ": down  " + input_code.LEFT + ": left  " + input_code.RIGHT + ": right")
+        if command_input not in [input_code.UP, input_code.DOWN, input_code.LEFT, input_code.RIGHT]:
+            raise input_code.InvalidCommandException()
+        return replace(self, message=input_code.get_direction_message(command_input))  # update weapon message as firing direction
 
 
 # gadget objects

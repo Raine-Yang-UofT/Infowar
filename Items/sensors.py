@@ -8,17 +8,24 @@ from Framework import input_code
 
 
 @dataclass(frozen=True)
-class SoundSensor(interface.ISensor):
+class SignalSensorConfig:
     """
-    Detect sound signal at a square region with a given radius around player
+    Detect signal at a square region with a given radius around player
 
         - name: the name of sensor
         - radius: the detection radius
-        - message: the message associated with the sensor
     """
     name: str
     radius: int
-    message: int
+
+
+class SoundSensor(interface.ISensor):
+    """
+    Detect sound signal at a square region with a given radius around player
+    """
+    def __init__(self, config: SignalSensorConfig):
+        self.config = config
+        self.message = message.SENSE_SOUND
 
     def detect_signal(self, sensors, robot) -> None:
         """
@@ -29,8 +36,7 @@ class SoundSensor(interface.ISensor):
         :return: None
         """
         sound_signal = sensors.display_signal_vision(robot.get_pos()[0], robot.get_pos()[1], self)
-        robot.receive_info(
-            "Sound signal detected at (" + str(robot.get_pos()[0]) + ", " + str(robot.get_pos()[1]) + ")")
+        robot.receive_info("Sound signal detected at (" + str(robot.get_pos()[0]) + ", " + str(robot.get_pos()[1]) + ")")
         robot.receive_info("Sound signal: ")
         robot.receive_info(sound_signal)
 
@@ -43,18 +49,13 @@ class SoundSensor(interface.ISensor):
         return self
 
 
-@dataclass(frozen=True)
 class HeatSensor(interface.ISensor):
     """
     Detect heat signal at a square region with a given radius around player
-
-        - name: the name of sensor
-        - radius: the detection radius
-        - message: the message associated with the sensor
     """
-    name: str
-    radius: int
-    message: int
+    def __init__(self, config: SignalSensorConfig):
+        self.config = config
+        self.message = message.SENSE_HEAT
 
     def detect_signal(self, sensors, robot) -> None:
         """
@@ -65,8 +66,7 @@ class HeatSensor(interface.ISensor):
         :return: None
         """
         heat_signal = sensors.display_signal_vision(robot.get_pos()[0], robot.get_pos()[1], self)
-        robot.receive_info(
-            "Heat signal detected at (" + str(robot.get_pos()[0]) + ", " + str(robot.get_pos()[1]) + ")")
+        robot.receive_info("Heat signal detected at (" + str(robot.get_pos()[0]) + ", " + str(robot.get_pos()[1]) + ")")
         robot.receive_info("Heat signal: ")
         robot.receive_info(heat_signal)
 
@@ -80,7 +80,7 @@ class HeatSensor(interface.ISensor):
 
 
 @dataclass(frozen=True)
-class Lidar(interface.ISensor):
+class LidarConfig:
     """
     Detect a square range around player and update the map
 
@@ -88,13 +88,20 @@ class Lidar(interface.ISensor):
         - radius: the detection radius
         - sound_emission: the sound emission of the sensor
         - heat_emission: the heat emission of the sensor
-        - message: the message associated with the sensor
     """
     name: str
     radius: int
     sound_emission: int
     heat_emission: int
-    message: int
+
+
+class Lidar(interface.ISensor):
+    """
+    Detect a square range around player and update the map
+    """
+    def __init__(self, config: LidarConfig):
+        self.config = config
+        self.message = message.SENSE_LIDAR
 
     def detect_signal(self, sensors, robot) -> None:
         """
@@ -105,8 +112,7 @@ class Lidar(interface.ISensor):
         :return: None
         """
         lidar_view = sensors.display_lidar_vision(robot.get_pos()[0], robot.get_pos()[1], self)
-        robot.receive_info(
-            "Complete lidar scanning at (" + str(robot.get_pos()[0]) + ", " + str(robot.get_pos()[1]) + ")")
+        robot.receive_info("Complete lidar scanning at (" + str(robot.get_pos()[0]) + ", " + str(robot.get_pos()[1]) + ")")
         robot.receive_info(lidar_view)
         robot.update_map(lidar_view)
 
@@ -120,7 +126,7 @@ class Lidar(interface.ISensor):
 
 
 @dataclass(frozen=True)
-class Drone(interface.ISensor):
+class DroneConfig:
     """
     Move to a certain location based on player's command
     and detect a square region around the location
@@ -129,17 +135,23 @@ class Drone(interface.ISensor):
         - radius: the detection radius
         - sound_emission: the sound emission of the sensor
         - heat_emission: the heat emission of the sensor
-        - message: the message associated with the sensor
-        - commands: the commands inputed by player
         - longest_range: the longest path the drone can move (maximum command length)
     """
     name: str
     radius: int
     sound_emission: int
     heat_emission: int
-    message: int
-    commands: str
     longest_range: int
+
+
+class Drone(interface.ISensor):
+    """
+    Move the drone to a certain location based on player's command
+    """
+    def __init__(self, config: DroneConfig):
+        self.config = config
+        self.message = message.SENSE_DRONE
+        self.commands = ''
 
     def detect_signal(self, sensors, robot) -> None:
         """
@@ -161,17 +173,17 @@ class Drone(interface.ISensor):
         :return: the drone with updated parameters
         """
         command = input("Enter (w, a, s, d) to map the path of drone: ")
-        if not (all([c in ['w', 'a', 's', 'd'] for c in command]) and len(command) <= self.longest_range):
-            print("Invalid drone path, make sure the path only contains (w, a, s, d) and is shorter than " + str(
-                self.longest_range) + " steps")
+        if not (all([c in ['w', 'a', 's', 'd'] for c in command]) and len(command) <= self.config.longest_range):
+            print("Invalid drone path, make sure the path only contains (w, a, s, d) and is shorter than " + str(self.config.longest_range) + " steps")
             raise input_code.InvalidCommandException()
         # update drone path
         print("drone path updated")
-        return replace(self, commands=command)
+        self.commands = command
+        return self
 
 
 @dataclass(frozen=True)
-class ScoutCar(interface.ISensor):
+class ScoutCarConfig:
     """
     Move to a certain location based on player's command
     and detect a square region around the location
@@ -181,17 +193,23 @@ class ScoutCar(interface.ISensor):
         - radius: the detection radius
         - sound_emission: the sound emission of the sensor
         - heat_emission: the heat emission of the sensor
-        - message: the message associated with the sensor
-        - direction: the direction of cat movement
         - max_barricade_remove: the maximum number of barricades the scout car can remove
     """
     name: str
     radius: int
     sound_emission: int
     heat_emission: int
-    message: int
-    direction: str
     max_barricade_remove: int
+
+
+class ScoutCar(interface.ISensor):
+    """
+    Move the scout car to a certain location based on player's command
+    """
+    def __init__(self, config: ScoutCarConfig):
+        self.config = config
+        self.message = message.SENSE_SCOUT_CAR
+        self.direction = ''
 
     def detect_signal(self, sensors, robot) -> None:
         """
@@ -202,8 +220,7 @@ class ScoutCar(interface.ISensor):
         :return: None
         """
         scout_car_view = sensors.display_scout_car_vision(robot.get_pos()[0], robot.get_pos()[1], self)
-        robot.receive_info(
-            "Scout car scanning at (" + str(scout_car_view[1][0]) + ", " + str(scout_car_view[1][1]) + ")")
+        robot.receive_info("Scout car scanning at (" + str(scout_car_view[1][0]) + ", " + str(scout_car_view[1][1]) + ")")
         robot.receive_info(scout_car_view[0])
         robot.update_map(scout_car_view[0])
 
@@ -219,12 +236,13 @@ class ScoutCar(interface.ISensor):
             raise input_code.InvalidCommandException()
         # update scout car direction
         print("scout car direction updated")
-        return replace(self, direction=direction)
+        self.direction = direction
+        return self
 
 
 # sensor objects
-heat_sensor = HeatSensor(name="heat sensor", radius=5, message=message.SENSE_HEAT)
-sound_sensor = SoundSensor(name="sound sensor", radius=5, message=message.SENSE_SOUND)
-lidar = Lidar(name="lidar", radius=3, sound_emission=2, heat_emission=5, message=message.SENSE_LIDAR)
-drone = Drone(name='drone', radius=2, sound_emission=6, heat_emission=2, message=message.SENSE_DRONE, commands='', longest_range=10)
-scout_car = ScoutCar(name='scout car', radius=2, sound_emission=4, heat_emission=2, message=message.SENSE_SCOUT_CAR, direction='', max_barricade_remove=3)
+heat_sensor = HeatSensor(SignalSensorConfig(name="heat sensor", radius=5))
+sound_sensor = SoundSensor(SignalSensorConfig(name="sound sensor", radius=5))
+lidar = Lidar(LidarConfig(name="lidar", radius=3, sound_emission=2, heat_emission=5))
+drone = Drone(DroneConfig(name='drone', radius=2, sound_emission=6, heat_emission=2, longest_range=10))
+scout_car = ScoutCar(ScoutCarConfig(name='scout car', radius=2, sound_emission=4, heat_emission=2, max_barricade_remove=2))

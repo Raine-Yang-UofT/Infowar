@@ -25,8 +25,8 @@ class RobotWeapons:
         :return: the target hit by the weapon
         """
         # generate sound and heat at starting position
-        self.battlefield.generate_sound(x, y, weapon.sound_emission)
-        self.battlefield.generate_heat(x, y, weapon.heat_emission)
+        self.battlefield.generate_sound(x, y, weapon.config.sound_emission)
+        self.battlefield.generate_heat(x, y, weapon.config.heat_emission)
 
         # set shooting direction
         dx, dy = 0, 0
@@ -44,15 +44,15 @@ class RobotWeapons:
         # initial displacement
         px += dx
         py += dy
-        damage = weapon.damage
-        accuracy = weapon.accuracy
+        damage = weapon.config.damage
+        accuracy = weapon.config.accuracy
         # find the first target hit
         while not self.battlefield.is_occupied(px, py):
             px += dx
             py += dy
-            accuracy -= weapon.accuracy_decay    # reduce weapon accuracy through distance
+            accuracy -= weapon.config.accuracy_decay    # reduce weapon accuracy through distance
             distance += 1
-            if distance >= weapon.range:
+            if distance >= weapon.config.range:
                 break
 
         # prevent out-of-bound index
@@ -87,7 +87,8 @@ class RobotWeapons:
         targets = []
 
         # generate sound and heat at starting position
-        self.battlefield.generate_heat(x, y, weapon.heat_emission)
+        self.battlefield.generate_heat(x, y, weapon.config.heat_emission)
+        self.battlefield.generate_heat(x, y, weapon.config.sound_emission)
 
         # set target location
         px, py = x, y
@@ -103,7 +104,7 @@ class RobotWeapons:
         # examine the grids in the range
         for i in range(0, len(self.battlefield.field[0])):
             for j in range(0, len(self.battlefield.field)):
-                if (i - px) ** 2 + (j - py) ** 2 <= weapon.impact_radius ** 2:
+                if (i - px) ** 2 + (j - py) ** 2 <= weapon.config.impact_radius ** 2:
                     # prevent index out of bound
                     if i < 0 or i >= len(self.battlefield.field[0]) or j < 0 or j >= len(self.battlefield.field):
                         continue
@@ -111,8 +112,8 @@ class RobotWeapons:
                     occupant = self.battlefield.get_grid(i, j).get_occupant()
                     if isinstance(occupant, IDamageable):
                         # calculate damage decay
-                        net_damage = weapon.damage.damage - weapon.impact_damage_decay * int(((i - px) ** 2 + (j - py) ** 2) ** 0.5)
-                        occupant.get_damage(replace(weapon.damage, damage=net_damage))
+                        net_damage = weapon.config.damage.damage - weapon.config.impact_damage_decay * int(((i - px) ** 2 + (j - py) ** 2) ** 0.5)
+                        occupant.get_damage(replace(weapon.config.damage, damage=net_damage))
                         targets.append("weapon hit " + occupant.get_name() + '!')
 
         return targets
