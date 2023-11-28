@@ -4,6 +4,7 @@ The configurations for robots, sensors, weapons, and gadgets
 from dataclasses import dataclass
 import Items.sensors as sensors
 import Items.weapons as weapons
+import Items.gadgets as gadgets
 
 
 @dataclass
@@ -31,7 +32,7 @@ class RobotConfig:
         - move_heat: the heat generated when robot moves
         - sensors: the sensors equipped
         - weapons: the weapons equipped
-        - gadgets: the gadgets equipped
+        - gadgets: the gadgets equipped and their total uses
     """
     HP: int
     armor: Armor
@@ -40,7 +41,7 @@ class RobotConfig:
     move_speed: int
     sensors: list
     weapons: list
-    gadgets: list
+    gadgets: dict
 
 
 # armors
@@ -69,5 +70,5 @@ default_config = RobotConfig(
     move_speed=50,
     sensors=[sensors.heat_sensor, sensors.sound_sensor, sensors.lidar, sensors.drone, sensors.scout_car],
     weapons=[weapons.assulter_rifle, weapons.submachine_gun, weapons.pistol, weapons.sniper_rifle, weapons.shotgun, weapons.impact_grenade, weapons.frag_grenade, weapons.breaching_grenade],
-    gadgets=[]
+    gadgets={gadgets.deployable_barricade: 3}   # gadget name: total uses
 )

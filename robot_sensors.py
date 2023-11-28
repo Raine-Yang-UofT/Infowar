@@ -56,7 +56,7 @@ class RobotSensor:
         result = [['*' for _ in range(0, len(self.battlefield.field[0]))] for _ in range(0, len(self.battlefield.field))]
         for i in range(0, len(self.battlefield.field)):
             for j in range(0, len(self.battlefield.field[0])):
-                if y - sensor.radius <= i <= y + sensor.radius and x - sensor.radius <= j <= x + sensor.radius:
+                if y - sensor.config.radius <= i <= y + sensor.config.radius and x - sensor.config.radius <= j <= x + sensor.config.radius:
                     if sensor.message == message.SENSE_SOUND:
                         result[i][j] = self.battlefield.get_grid(j, i).get_sound()
                     elif sensor.message == message.SENSE_HEAT:
@@ -77,10 +77,10 @@ class RobotSensor:
         :return: the signal to display
         """
         # emit sound and heat
-        self.battlefield.generate_sound(x, y, lidar.sound_emission)
-        self.battlefield.generate_heat(x, y, lidar.heat_emission)
+        self.battlefield.generate_sound(x, y, lidar.config.sound_emission)
+        self.battlefield.generate_heat(x, y, lidar.config.heat_emission)
 
-        return self.display_grid_helper(x, y, lidar.radius)
+        return self.display_grid_helper(x, y, lidar.config.radius)
 
     def display_drone_vision(self, x: int, y: int, drone: sensors.Drone) -> [list[list[str]], tuple[int, int]]:
         """
@@ -104,10 +104,10 @@ class RobotSensor:
             elif direction == 'd' and drone_x < len(self.battlefield.field[0]) - 1:
                 drone_x += 1
 
-        self.battlefield.generate_sound(x, y, drone.sound_emission)
-        self.battlefield.generate_heat(x, y, drone.heat_emission)
+        self.battlefield.generate_sound(x, y, drone.config.sound_emission)
+        self.battlefield.generate_heat(x, y, drone.config.heat_emission)
 
-        return self.display_grid_helper(drone_x, drone_y, drone.radius), (drone_x, drone_y)
+        return self.display_grid_helper(drone_x, drone_y, drone.config.radius), (drone_x, drone_y)
 
     def display_scout_car_vision(self, x: int, y: int, scout_car: sensors.ScoutCar) -> [list[list[str]], tuple[int, int]]:
         """
@@ -132,7 +132,7 @@ class RobotSensor:
         elif scout_car.direction == 'd' and car_x < len(self.battlefield.field[0]) - 1:
             vx = 1
 
-        max_barricade_remove = scout_car.max_barricade_remove
+        max_barricade_remove = scout_car.config.max_barricade_remove
         # first move to the next grid, prevent blocked by player itself
         car_x += vx
         car_y += vy
@@ -149,7 +149,7 @@ class RobotSensor:
                 else:
                     break
 
-        self.battlefield.generate_sound(x, y, scout_car.sound_emission)
-        self.battlefield.generate_heat(x, y, scout_car.heat_emission)
+        self.battlefield.generate_sound(x, y, scout_car.config.sound_emission)
+        self.battlefield.generate_heat(x, y, scout_car.config.heat_emission)
 
-        return self.display_grid_helper(car_x, car_y, scout_car.radius), (car_x, car_y)
+        return self.display_grid_helper(car_x, car_y, scout_car.config.radius), (car_x, car_y)

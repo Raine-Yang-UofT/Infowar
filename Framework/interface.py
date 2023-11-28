@@ -16,7 +16,7 @@ class IDisplayable:
 
         :return: the object's string representation
         """
-        # Override in children class
+        raise NotImplementedError()
 
 
 class IDamageable:
@@ -32,7 +32,7 @@ class IDamageable:
         :param damage: the damage
         :return: None
         """
-        # Override in children class
+        raise NotImplementedError()
 
     def get_name(self) -> str:
         """
@@ -41,7 +41,7 @@ class IDamageable:
         :return: the name of the object
         """
         # Override in children class
-        return 'the get_name method is not implemented in child class'
+        raise NotImplementedError()
 
 
 class ISensor:
@@ -59,6 +59,7 @@ class ISensor:
         :return: None
         """
         # Override in children class
+        raise NotImplementedError()
 
     def select_sensor_parameter(self):
         """
@@ -67,6 +68,7 @@ class ISensor:
         :return: a copy of sensor object with updated parameters
         """
         # Override in children class
+        raise NotImplementedError()
 
 
 class IWeapon:
@@ -84,6 +86,7 @@ class IWeapon:
         :return: None
         """
         # Override in children class
+        raise NotImplementedError()
 
     def select_weapon_parameter(self):
         """
@@ -92,4 +95,32 @@ class IWeapon:
         :return: a copy of weapon object with updated parameters
         """
         # Override in children class
+        raise NotImplementedError()
+
+
+class IGadget:
+    """
+    IGadget: an object can be used as a gadget
+
+    child classes should implement use_gadget() and select_gadget_parameter() methods
+    """
+    def use_gadget(self, gadgets, robot) -> None:
+        """
+        Use gadget from robot
+
+        :param gadgets: the RobotGadgets observer class
+        :param robot: the robot that uses the gadget
+        :return: None
+        """
+        # Override in children class
+        raise NotImplementedError()
+
+    def select_gadget_parameter(self):
+        """
+        Add additional parameters to gadget
+
+        :return: a copy of gadget object with updated parameters
+        """
+        # Override in children class
+        raise NotImplementedError()
 

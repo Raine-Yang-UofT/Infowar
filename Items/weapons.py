@@ -1,13 +1,11 @@
 from dataclasses import dataclass
-from dataclasses import replace
-from Framework import input_code
 import damage as dmg
 from Framework import interface
 from Framework import input_code
 
 
 @dataclass(frozen=True)
-class StraightWeapon(interface.IWeapon):
+class StraightWeaponConfig:
     """
     Configurations for straight-firing weapons
 
@@ -19,7 +17,6 @@ class StraightWeapon(interface.IWeapon):
         - sound_emission: the sound emission of the weapon
         - heat_emission: the heat emission of the weapon
         - reaction_time: the reaction speed of weapon (determines message priority)
-        - message: the message related to weapon
     """
     name: str
     damage: dmg.Damage
@@ -29,7 +26,15 @@ class StraightWeapon(interface.IWeapon):
     sound_emission: int
     heat_emission: int
     reaction_time: int
-    message: int
+
+
+class StraightWeapon(interface.IWeapon):
+    """
+    The straight-firing weapon class
+    """
+    def __init__(self, config: StraightWeaponConfig):
+        self.config = config
+        self.message = -1
 
     def fire_weapon(self, weapons, robot) -> None:
         """
@@ -53,13 +58,12 @@ class StraightWeapon(interface.IWeapon):
                               input_code.UP + ": up  " + input_code.DOWN + ": down  " + input_code.LEFT + ": left  " + input_code.RIGHT + ": right")
         if command_input not in [input_code.UP, input_code.DOWN, input_code.LEFT, input_code.RIGHT]:
             raise input_code.InvalidCommandException()
-        return replace(self,
-                       message=input_code.get_direction_message(
-                           command_input))  # update weapon message as firing direction
+        self.message = input_code.get_direction_message(command_input)  # update weapon message as firing direction
+        return self
 
 
 @dataclass(frozen=True)
-class ProjectileWeapon(interface.IWeapon):
+class ProjectileWeaponConfig:
     """
     Configurations for projectile weapons
 
@@ -72,7 +76,6 @@ class ProjectileWeapon(interface.IWeapon):
         - sound_emission: the sound emission of the weapon
         - heat_emission: the heat emission of the weapon
         - reaction_time: the reaction speed of weapon (determines message priority)
-        - message: the message related to weapon (direction, range)
     """
     name: str
     damage: dmg.Damage
@@ -83,7 +86,15 @@ class ProjectileWeapon(interface.IWeapon):
     sound_emission: int
     heat_emission: int
     reaction_time: int
-    message: tuple[int, int]
+
+
+class ProjectileWeapon(interface.IWeapon):
+    """
+    The projectile weapon class
+    """
+    def __init__(self, config: ProjectileWeaponConfig):
+        self.config = config
+        self.message = (-1, -1)
 
     def fire_weapon(self, weapons, robot) -> None:
         """
@@ -106,29 +117,27 @@ class ProjectileWeapon(interface.IWeapon):
         """
         command_input = input("Select the direction of firing:" +
                               input_code.UP + ": up  " + input_code.DOWN + ": down  " + input_code.LEFT + ": left  " + input_code.RIGHT + ": right")
-        range_input = input(
-            "Select the range of firing: (range between " + str(self.min_launch_range) + " - " + str(
-                self.max_launch_range) + ")")
+        range_input = input("Select the range of firing: (range between " + str(self.config.min_launch_range) + " - " + str(self.config.max_launch_range) + ")")
         if range_input.isdigit():
             range_input = int(range_input)
         else:
             raise input_code.InvalidCommandException()
 
         if ((command_input not in [input_code.UP, input_code.DOWN, input_code.LEFT, input_code.RIGHT])
-                or range_input < self.min_launch_range or range_input > self.max_launch_range):
+                or range_input < self.config.min_launch_range or range_input > self.config.max_launch_range):
             raise input_code.InvalidCommandException()
-        return replace(self, message=(input_code.get_direction_message(command_input),
-                                      range_input))  # update weapon message as firing direction and range
+        self.message = (input_code.get_direction_message(command_input), range_input)  # update weapon message as firing direction and range
+        return self
 
 
 # weapons
-assulter_rifle = StraightWeapon("assulter rifle", dmg.Damage(80, 3), 0.75, 0.03, 8, 6, 4, 40, 0)
-submachine_gun = StraightWeapon("submachine gun", dmg.Damage(70, 2), 0.9, 0.03, 6, 5, 3, 65, 0)
-pistol = StraightWeapon("pistol", dmg.Damage(60, 2), 0.95, 0.02, 5, 4, 2, 90, 0)
-sniper_rifle = StraightWeapon("sniper_rifle", dmg.Damage(95, 4), 0.2, -0.03, 12, 8, 5, 10, 0)
-shotgun = StraightWeapon("shotgun", dmg.Damage(100, 1), 1, 0.15, 4, 7, 4, 30, 0)
+assulter_rifle = StraightWeapon(StraightWeaponConfig("assulter rifle", dmg.Damage(80, 3), 0.75, 0.03, 8, 6, 4, 40))
+submachine_gun = StraightWeapon(StraightWeaponConfig("submachine gun", dmg.Damage(70, 2), 0.9, 0.03, 6, 5, 3, 65))
+pistol = StraightWeapon(StraightWeaponConfig("pistol", dmg.Damage(60, 2), 0.95, 0.02, 5, 4, 2, 90))
+sniper_rifle = StraightWeapon(StraightWeaponConfig("sniper_rifle", dmg.Damage(95, 4), 0.2, -0.03, 12, 8, 5, 10))
+shotgun = StraightWeapon(StraightWeaponConfig("shotgun", dmg.Damage(100, 1), 1, 0.15, 4, 7, 4, 30))
 
 # projectile weapons
-impact_grenade = ProjectileWeapon("impact grenade", dmg.Damage(40, 1), 4, 6, 3, 10, 4, 2, 60, (0, 0))
-frag_grenade = ProjectileWeapon("frag grenade", dmg.Damage(60, 2), 3, 6, 2, 20, 5, 3, 30, (0, 0))
-breaching_grenade = ProjectileWeapon("breaching grenade", dmg.Damage(10, 5), 3, 5, 2, 0, 5, 2, 80, (0, 0))
+impact_grenade = ProjectileWeapon(ProjectileWeaponConfig("impact grenade", dmg.Damage(40, 1), 4, 6, 3, 10, 4, 2, 60))
+frag_grenade = ProjectileWeapon(ProjectileWeaponConfig("frag grenade", dmg.Damage(60, 2), 3, 6, 2, 20, 5, 3, 30))
+breaching_grenade = ProjectileWeapon(ProjectileWeaponConfig("breaching grenade", dmg.Damage(10, 5), 3, 5, 2, 0, 5, 2, 80))
