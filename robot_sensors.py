@@ -133,9 +133,6 @@ class RobotSensor:
             vx = 1
 
         max_barricade_remove = scout_car.config.max_barricade_remove
-        # first move to the next grid, prevent blocked by player itself
-        car_x += vx
-        car_y += vy
         # move along the direction while breaking the barricades along the way
         while self.battlefield.get_grid(car_x + vx, car_y + vy) is not None and not self.battlefield.is_blocked(car_x + vx, car_y + vy):
             # update car location

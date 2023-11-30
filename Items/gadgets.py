@@ -7,21 +7,28 @@ from Framework import input_code
 
 
 @dataclass(frozen=True)
-class DeployableBarricade(interface.IGadget):
+class DeployableBarricadeConfig:
     """
     A hard barricade that can be deployed on the ground. It can block straight-firing weapons and robots
 
         - name: the name of the gadget
         - HP: the HP of the gadget
         - armor: the armor of the gadget
-        - message: the message associated with the gadget
         - reaction_time: the reaction speed of gadget (determines message priority)
     """
     name: str
     HP: int
     armor: int
-    message: int
     reaction_time: int
+
+
+class DeployableBarricade(interface.IGadget):
+    """
+    The deployable barricade gadget class
+    """
+    def __init__(self, config: DeployableBarricadeConfig):
+        self.config = config
+        self.message = -1
 
     def use_gadget(self, gadgets, robot) -> None:
         """
@@ -43,8 +50,9 @@ class DeployableBarricade(interface.IGadget):
                               input_code.UP + ": up  " + input_code.DOWN + ": down  " + input_code.LEFT + ": left  " + input_code.RIGHT + ": right")
         if command_input not in [input_code.UP, input_code.DOWN, input_code.LEFT, input_code.RIGHT]:
             raise input_code.InvalidCommandException()
-        return replace(self, message=input_code.get_direction_message(command_input))  # update weapon message as firing direction
+        self.message = input_code.get_direction_message(command_input)
+        return self  # update weapon message as firing direction
 
 
 # gadget objects
-deployable_barricade = DeployableBarricade('deployable barricade', 200, 5, message.DEPLOYABLE_BARRICADE, 10)
+deployable_barricade = DeployableBarricade(DeployableBarricadeConfig('deployable barricade', 200, 5, 10))
