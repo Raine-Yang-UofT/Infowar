@@ -2,14 +2,15 @@
 The class of a gameplay
 """
 import robot_weapons
+import robot_gadgets
+import robot_sensors
 from battlefield import Battlefield
 from robot import Robot
 from Framework import message
 from Framework.message import Message
 from queue import PriorityQueue
 from Configurations import game_config
-import robot_sensors
-from controllers import MoveController, SensorController, WeaponController
+from controllers import MoveController, SensorController, WeaponController, GadgetController
 
 
 class Game:
@@ -26,6 +27,7 @@ class Game:
         self.battlefield = Battlefield(game_config.FIELD_ROW, game_config.FIELD_COL)
         self.sensors = robot_sensors.RobotSensor(self.battlefield)  # the sensors in the game
         self.weapons = robot_weapons.RobotWeapons(self.battlefield)  # the weapons in the game
+        self.gadgets = robot_gadgets.RobotGadgets(self.battlefield)  # the gadgets in the game
         self.battlefield.initialize_field(game_config.BARRICADE_COVERAGE, game_config.HARD_BARRICADE_COVERAGE, game_config.BARRICADE_HP_RANGE,
                                           game_config.BARRICADE_ARMOR_RANGE)
         self.players = {}  # the dict of all players
@@ -37,6 +39,7 @@ class Game:
         self.move_controller = MoveController(self)
         self.sensor_controller = SensorController(self)
         self.weapon_controller = WeaponController(self)
+        self.gadget_controller = GadgetController(self)
 
     def add_player(self, player: Robot, player_id: int) -> None:
         """
@@ -196,8 +199,7 @@ class MessageCenter:
             elif player_message.type == message.TYPE_FIRE:
                 self.game.weapon_controller.receive_message(player_message)
             elif player_message.type == message.TYPE_GADGET:
-                # TODO handle gadget message
-                pass
+                self.game.gadget_controller.receive_message(player_message)
             elif player_message.type == message.TYPE_DISCONNECT:
                 self.num_players -= 1
                 self.game.remove_player(player_message.source)

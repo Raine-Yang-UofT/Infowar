@@ -115,7 +115,7 @@ class Robot(IDisplayable, IDamageable):
         """
         Return the state of robot
 
-        :return: sekf.state
+        :return: self.state
         """
         return self.state
 

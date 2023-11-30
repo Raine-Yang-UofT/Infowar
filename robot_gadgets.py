@@ -2,7 +2,6 @@
 Handle gadget use
 """
 from battlefield import Battlefield
-import Items.gadgets as gadgets
 import Framework.message as message
 import barricade
 
@@ -35,6 +34,6 @@ class RobotGadgets:
             return 'Deployment failed: the location has been blocked'
 
         grid = self.battlefield.get_grid(px, py)
-        grid.change_occupant(barricade.HardBarricade(gadget.HP, gadget.armor, grid))
+        grid.change_occupant(barricade.HardBarricade(gadget.config.HP, gadget.config.armor, grid))
 
         return f'Deploy barricade at ({px}, {py})'

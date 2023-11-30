@@ -124,3 +124,21 @@ class IGadget:
         # Override in children class
         raise NotImplementedError()
 
+    def check_remaining_use(self) -> bool:
+        """
+        Check whether the gadget is used up
+        Reduce total use by one
+
+        :return: None
+        """
+        # Override in children class
+        raise NotImplementedError()
+
+    def reset_remaining_use(self) -> None:
+        """
+        Reset the remaining use of the gadget
+
+        :return: None
+        """
+        # Override in children class
+        raise NotImplementedError()

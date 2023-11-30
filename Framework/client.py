@@ -98,6 +98,20 @@ def select_gadget_command(net: Network):
     """
     print("Select the gadget")
     prompt = ''
+    for i in range(0, len(player.gadgets)):
+        prompt += f'{i + 1}:{player.gadgets[i].config.name} ({player.gadgets[i].remain}/{player.gadgets[i].total}) '
+    try:
+        index = int(input(prompt)) - 1
+        gadget = player.gadgets[index].select_gadget_parameter()  # input additional parameters for gadget
+    except Exception as e:  # prevent invalid index
+        print("Invalid Command")
+        print(e)
+        return None
+
+    # send message
+    # calculate priority: 100 - gadget.reaction_time
+    return net.send(Message(net.get_player().get_id(), message.TYPE_GADGET, gadget.message, gadget,
+                            max(0, 100 - gadget.config.reaction_time)))
 
 
 if __name__ == '__main__':
@@ -147,9 +161,7 @@ if __name__ == '__main__':
             elif command_type == input_code.FIRE:  # receive fire command
                 result = select_fire_command(net)
             elif command_type == input_code.GADGET:  # receive gadget command
-                # result = select_gadget_command(net)
-                pass
-                # TODO: complete select_gadget_command
+                result = select_gadget_command(net)
             elif command_type == 'm':  # open map
                 print("Map: ")
                 player.print_map()

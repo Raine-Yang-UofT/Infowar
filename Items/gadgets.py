@@ -1,8 +1,8 @@
 """
 gadget items
 """
-from dataclasses import dataclass, replace
-from Framework import message, interface
+from dataclasses import dataclass
+from Framework import interface
 from Framework import input_code
 
 
@@ -15,11 +15,13 @@ class DeployableBarricadeConfig:
         - HP: the HP of the gadget
         - armor: the armor of the gadget
         - reaction_time: the reaction speed of gadget (determines message priority)
+        - total_use: the total number of times the gadget can be used
     """
     name: str
     HP: int
     armor: int
     reaction_time: int
+    total_use: int
 
 
 class DeployableBarricade(interface.IGadget):
@@ -29,6 +31,8 @@ class DeployableBarricade(interface.IGadget):
     def __init__(self, config: DeployableBarricadeConfig):
         self.config = config
         self.message = -1
+        self.remain = config.total_use
+        self.total = config.total_use
 
     def use_gadget(self, gadgets, robot) -> None:
         """
@@ -53,6 +57,26 @@ class DeployableBarricade(interface.IGadget):
         self.message = input_code.get_direction_message(command_input)
         return self  # update weapon message as firing direction
 
+    def check_remaining_use(self) -> bool:
+        """
+        Check the remaining use of the gadget
+
+        :return: whether there is remaining gadget use
+        """
+        if self.remain == 0:
+            return False
+        else:
+            self.remain -= 1
+            return True
+
+    def reset_remaining_use(self) -> None:
+        """
+        Reset the remaining use of the gadget
+
+        :return: None
+        """
+        self.remain = self.total
+
 
 # gadget objects
-deployable_barricade = DeployableBarricade(DeployableBarricadeConfig('deployable barricade', 200, 5, 10))
+deployable_barricade = DeployableBarricade(DeployableBarricadeConfig('deployable barricade', 200, 5, 10, 2))

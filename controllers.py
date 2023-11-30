@@ -128,3 +128,33 @@ class WeaponController:
             return
 
         weapon.fire_weapon(self.game.weapons, robot)
+
+
+class GadgetController:
+    """
+    A controller class for gadgets
+    """
+
+    def __init__(self, game):
+        """
+        Initialize GadgetController
+
+        :param game: the game being played
+        """
+        self.game = game
+
+    def receive_message(self, player_message: message.Message) -> None:
+        """
+        Receive a gadget message from MessageCenter
+
+        :param player_message: the player message to be executed
+        :return: None
+        """
+        gadget = player_message.data  # the gadget object
+        robot = self.game.players[player_message.source]    # the robot to control
+
+        # check robot state
+        if robot.get_state() != game_config.STATE_NORMAL:
+            return
+
+        gadget.use_gadget(self.game.gadgets, robot)

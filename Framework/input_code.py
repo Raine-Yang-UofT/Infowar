@@ -41,5 +41,8 @@ def get_direction_message(command_input: str) -> int:
 
 class InvalidCommandException(Exception):
 
+    def __init__(self, error_message="Invalid Command"):
+        self.error_message = error_message
+
     def __str__(self):
-        return 'Invalid Command'
+        return self.error_message
