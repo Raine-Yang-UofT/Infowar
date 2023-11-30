@@ -137,7 +137,7 @@ class RobotSensor:
         car_x += vx
         car_y += vy
         # move along the direction while breaking the barricades along the way
-        while self.battlefield.get_grid(car_x, car_y) is not None and not self.battlefield.is_blocked(car_x, car_y):
+        while self.battlefield.get_grid(car_x + vx, car_y + vy) is not None and not self.battlefield.is_blocked(car_x + vx, car_y + vy):
             # update car location
             car_x += vx
             car_y += vy

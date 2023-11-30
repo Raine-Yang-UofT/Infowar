@@ -15,7 +15,6 @@ from Configurations.robot_config import default_config
 import message
 from message import Message
 import input_code
-from Items import weapons
 
 INFINITY = 1000000000  # a psudo-infinity value for sensor priority
 
@@ -104,7 +103,7 @@ def select_gadget_command(net: Network):
 if __name__ == '__main__':
     # TODO check the validity of robot config
 
-    net = Network("100.67.91.89")
+    net = Network("100.67.80.200")
     net.connect(default_config)
     player = net.get_player()  # receive the initialized player robot
     print("You are player " + str(player.get_id()))
