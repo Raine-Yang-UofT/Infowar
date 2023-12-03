@@ -101,4 +101,3 @@ class Grid:
             return '_'
         else:
             return self.occupant.display()
-

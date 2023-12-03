@@ -208,6 +208,3 @@ class MessageCenter:
 
         print('complete round')
         self.complete_round = True  # all player commands have been processed, time to send message to clients
-
-
-
