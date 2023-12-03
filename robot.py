@@ -7,6 +7,7 @@ from Configurations.robot_config import RobotConfig
 from grid import Grid
 import Configurations.game_config as game_config
 import random
+from dataclasses import dataclass
 
 
 def print_list_helper(lst: list[list]) -> None:
@@ -38,6 +39,71 @@ def print_sensor_helper(reading: list[list]) -> None:
             print()
 
 
+@dataclass
+class RobotState:
+    """
+    the class for robot states
+
+        - vision: whether the robot has vision
+        - move: whether the robot can move
+        - sensor: whether the robot can use sensors
+        - weapon: whether the robot can use weapons
+        - gadget: whether the robot can use gadgets
+        - alive: whether the robot is alive
+    """
+    vision: bool
+    move: bool
+    sensor: bool
+    weapon: bool
+    gadget: bool
+    alive: bool
+
+    def set_normal(self):
+        """
+        set the robot to normal state
+
+        :return: None
+        """
+        self.vision = True
+        self.move = True
+        self.sensor = True
+        self.weapon = True
+        self.gadget = True
+        self.alive = True
+
+    def set_dead(self):
+        """
+        set the robot to dead state
+
+        :return: None
+        """
+        self.vision = False
+        self.move = False
+        self.sensor = False
+        self.weapon = False
+        self.gadget = False
+        self.alive = False
+
+    def set_state(self, vision: bool = None, move: bool = None, sensor: bool = None, weapon: bool = None, gadget: bool = None, alive: bool = None):
+        """
+        set the robot to a given state
+
+        :param vision: whether the robot has vision
+        :param move: whether the robot can move
+        :param sensor: whether the robot can use sensors
+        :param weapon: whether the robot can use weapons
+        :param gadget: whether the robot can use gadgets
+        :param alive: whether the robot is alive
+        :return: None
+        """
+        self.vision = vision if vision is not None else self.vision
+        self.move = move if move is not None else self.move
+        self.sensor = sensor if sensor is not None else self.sensor
+        self.weapon = weapon if weapon is not None else self.weapon
+        self.gadget = gadget if gadget is not None else self.gadget
+        self.alive = alive if alive is not None else self.alive
+
+
 class Robot(IDisplayable, IDamageable):
 
     def __init__(self, robot_config: RobotConfig, player_id: int) -> None:
@@ -49,7 +115,7 @@ class Robot(IDisplayable, IDamageable):
         """
         # the id assigned to player and game
         self.player_id = player_id
-        self.state = game_config.STATE_NORMAL
+        self.state = RobotState(True, True, True, True, True, True)
 
         # extract base configuration
         self.max_HP = robot_config.HP
@@ -111,7 +177,7 @@ class Robot(IDisplayable, IDamageable):
         """
         return 'player ' + str(self.player_id)
 
-    def get_state(self) -> int:
+    def get_state(self) -> RobotState:
         """
         Return the state of robot
 
@@ -175,36 +241,41 @@ class Robot(IDisplayable, IDamageable):
         """
         self.info_list.clear()
 
-    def update_map(self, vision: list[list[str]]) -> None:
+    def update_map(self, robot_vision: list[list[str]]) -> None:
         """
         Update the player's local map
 
-        :param vision: the field of vision obtained by player
+        :param robot_vision: the field of vision obtained by player
         :return: None
         """
-        for i in range(0, len(vision)):
-            for j in range(0, len(vision[0])):
-                if self.map[i][j] != vision[i][j] and vision[i][j] != '*':
-                    self.map[i][j] = vision[i][j]
+        for i in range(0, len(robot_vision)):
+            for j in range(0, len(robot_vision[0])):
+                if self.map[i][j] != robot_vision[i][j] and robot_vision[i][j] != '*':
+                    self.map[i][j] = robot_vision[i][j]
                     # hide enemy robots
-                    if vision[i][j] == 'R' and (j, i) != self.grid.get_pos():
+                    if robot_vision[i][j] == 'R' and (j, i) != self.grid.get_pos():
                         self.map[i][j] = '_'
 
-    def update_vision(self, vision: list[list[str]]) -> None:
+    def update_vision(self, robot_vision: list[list[str]]) -> None:
         """
         Update the player's vision
 
-        :param vision: the field of vision obtained by player
+        :param robot_vision: the field of vision obtained by player
         :return: None
         """
+        # check robot state
+        if not self.get_state().vision:
+            self.receive_info("Robot vision is interrupted!")
+            return
+
         x, y = self.grid.get_pos()
         for i in range(y - 1, y + 2):
             row = []
             for j in range(x - 1, x + 2):
-                if i < 0 or i >= len(vision) or j < 0 or j >= len(vision):
+                if i < 0 or i >= len(robot_vision) or j < 0 or j >= len(robot_vision):
                     row.append('*')
                 else:
-                    row.append(vision[i][j])
+                    row.append(robot_vision[i][j])
             self.vision.append(row)
 
     def print_vision(self) -> None:
@@ -241,5 +312,5 @@ class Robot(IDisplayable, IDamageable):
         self.receive_info("Receives damage!")
 
         if self.HP <= 0:
-            self.state = game_config.STATE_DEAD  # change robot state to dead
+            self.state.set_dead()  # change robot state to dead
             self.receive_info("Robot destroyed!")

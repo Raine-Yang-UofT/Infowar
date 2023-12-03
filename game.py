@@ -84,7 +84,8 @@ class Game:
             self.players[player_id].clear_info()
             self.players[player_id].vision = []
 
-        print_field(self.battlefield)   # test method: print field
+        # ONLY FOR TESTING: print battlefield status
+        print_field(self.battlefield)
         print('---')
         print_sound(self.battlefield)
         print('---')

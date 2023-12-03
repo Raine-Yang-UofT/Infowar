@@ -1,4 +1,3 @@
-from Configurations import game_config
 from Framework import message
 
 
@@ -31,7 +30,7 @@ class MoveController:
             return
 
         # check robot state
-        if robot.get_state() != game_config.STATE_NORMAL:
+        if not robot.get_state().move:
             return
 
         x, y = robot.get_pos()  # the player's current location
@@ -94,7 +93,7 @@ class SensorController:
         robot = self.game.players[player_message.source]    # the robot to control
 
         # check robot state
-        if robot.get_state() != game_config.STATE_NORMAL:
+        if not robot.get_state().sensor:
             return
 
         # use the sensor
@@ -127,7 +126,7 @@ class WeaponController:
         robot = self.game.players[player_message.source]    # the robot to control
 
         # check robot state
-        if robot.get_state() != game_config.STATE_NORMAL:
+        if not robot.get_state().weapon:
             return
 
         weapon.fire_weapon(self.game.weapons, robot)
@@ -160,7 +159,7 @@ class GadgetController:
         gadget = player_message.data  # the gadget object
 
         # check robot state
-        if robot.get_state() != game_config.STATE_NORMAL:
+        if not robot.get_state().gadget:
             return
 
         # use gadget

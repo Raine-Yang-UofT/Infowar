@@ -133,7 +133,7 @@ if __name__ == '__main__':
     # the game loop
     while True:
         # end client if game is over
-        if player.HP <= 0:
+        if not player.get_state().alive:
             print("You are dead, game over")
             # send disconnect message to server
             net.send(Message(net.get_player().get_id(), message.TYPE_DISCONNECT, message.DISCONNECT, None, -1))

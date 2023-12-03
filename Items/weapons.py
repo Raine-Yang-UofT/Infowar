@@ -132,12 +132,12 @@ class ProjectileWeapon(interface.IWeapon):
 
 # weapons
 assulter_rifle = StraightWeapon(StraightWeaponConfig("assulter rifle", dmg.Damage(80, 3), 0.75, 0.03, 8, 6, 4, 40))
-submachine_gun = StraightWeapon(StraightWeaponConfig("submachine gun", dmg.Damage(70, 2), 0.9, 0.03, 6, 5, 3, 65))
+submachine_gun = StraightWeapon(StraightWeaponConfig("submachine gun", dmg.Damage(70, 2), 0.85, 0.03, 6, 5, 3, 65))
 pistol = StraightWeapon(StraightWeaponConfig("pistol", dmg.Damage(60, 2), 0.95, 0.02, 5, 4, 2, 90))
-sniper_rifle = StraightWeapon(StraightWeaponConfig("sniper_rifle", dmg.Damage(95, 4), 0.2, -0.03, 12, 8, 5, 10))
+sniper_rifle = StraightWeapon(StraightWeaponConfig("sniper_rifle", dmg.Damage(100, 4), 0.2, -0.03, 12, 6, 5, 10))
 shotgun = StraightWeapon(StraightWeaponConfig("shotgun", dmg.Damage(100, 1), 1, 0.15, 4, 7, 4, 30))
 
 # projectile weapons
 impact_grenade = ProjectileWeapon(ProjectileWeaponConfig("impact grenade", dmg.Damage(40, 1), 4, 6, 3, 10, 4, 2, 60))
 frag_grenade = ProjectileWeapon(ProjectileWeaponConfig("frag grenade", dmg.Damage(60, 2), 3, 6, 2, 20, 5, 3, 30))
-breaching_grenade = ProjectileWeapon(ProjectileWeaponConfig("breaching grenade", dmg.Damage(10, 5), 3, 5, 2, 0, 5, 2, 80))
+breaching_grenade = ProjectileWeapon(ProjectileWeaponConfig("breaching grenade", dmg.Damage(5, 5), 3, 5, 2, 0, 5, 2, 80))
