@@ -30,9 +30,9 @@ class DeployableBarricade(interface.IGadget):
     """
     def __init__(self, config: DeployableBarricadeConfig):
         self.config = config
-        self.message = -1
         self.remain = config.total_use
         self.total = config.total_use
+        self.message = -1
 
     def use_gadget(self, gadgets, robot) -> None:
         """
@@ -42,6 +42,7 @@ class DeployableBarricade(interface.IGadget):
         :param robot: the robot that uses the gadget
         :return: None
         """
+        self.remain -= 1
         robot.receive_info(gadgets.deploy_barricade(robot.get_pos()[0], robot.get_pos()[1], self))
 
     def select_gadget_parameter(self):
@@ -50,12 +51,16 @@ class DeployableBarricade(interface.IGadget):
 
         :return: a copy of gadget object with updated parameters
         """
+        # check remaining use
+        if not self.check_remaining_use():
+            raise input_code.InvalidCommandException("No remaining use of deployable barricade")
+
         command_input = input("Select the direction to deploy barricade:" +
                               input_code.UP + ": up  " + input_code.DOWN + ": down  " + input_code.LEFT + ": left  " + input_code.RIGHT + ": right")
         if command_input not in [input_code.UP, input_code.DOWN, input_code.LEFT, input_code.RIGHT]:
             raise input_code.InvalidCommandException()
         self.message = input_code.get_direction_message(command_input)
-        return self  # update weapon message as firing direction
+        return self
 
     def check_remaining_use(self) -> bool:
         """
@@ -63,11 +68,7 @@ class DeployableBarricade(interface.IGadget):
 
         :return: whether there is remaining gadget use
         """
-        if self.remain == 0:
-            return False
-        else:
-            self.remain -= 1
-            return True
+        return self.remain > 0
 
     def reset_remaining_use(self) -> None:
         """

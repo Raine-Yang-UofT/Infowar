@@ -2,8 +2,7 @@
 Sensor items
 """
 from dataclasses import dataclass
-from dataclasses import replace
-from Framework import interface, message
+from Framework import interface
 from Framework import input_code
 
 
@@ -25,7 +24,6 @@ class SoundSensor(interface.ISensor):
     """
     def __init__(self, config: SignalSensorConfig):
         self.config = config
-        self.message = message.SENSE_SOUND
 
     def detect_signal(self, sensors, robot) -> None:
         """
@@ -55,7 +53,6 @@ class HeatSensor(interface.ISensor):
     """
     def __init__(self, config: SignalSensorConfig):
         self.config = config
-        self.message = message.SENSE_HEAT
 
     def detect_signal(self, sensors, robot) -> None:
         """
@@ -101,7 +98,6 @@ class Lidar(interface.ISensor):
     """
     def __init__(self, config: LidarConfig):
         self.config = config
-        self.message = message.SENSE_LIDAR
 
     def detect_signal(self, sensors, robot) -> None:
         """
@@ -150,7 +146,6 @@ class Drone(interface.ISensor):
     """
     def __init__(self, config: DroneConfig):
         self.config = config
-        self.message = message.SENSE_DRONE
         self.commands = ''
 
     def detect_signal(self, sensors, robot) -> None:
@@ -208,7 +203,6 @@ class ScoutCar(interface.ISensor):
     """
     def __init__(self, config: ScoutCarConfig):
         self.config = config
-        self.message = message.SENSE_SCOUT_CAR
         self.direction = ''
 
     def detect_signal(self, sensors, robot) -> None:

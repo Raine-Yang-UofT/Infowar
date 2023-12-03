@@ -127,7 +127,6 @@ class IGadget:
     def check_remaining_use(self) -> bool:
         """
         Check whether the gadget is used up
-        Reduce total use by one
 
         :return: None
         """

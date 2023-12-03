@@ -7,12 +7,11 @@ class Message:
     """
     A message from client
 
-        source: the id of the player who sends message
-        type: the type of message
-        command: the specific command player sends
-        data: any data in the message (if required)
-        priority: the order of message in message queue,
-                  lower value for higher priority
+        - source: the id of the player who sends message
+        - type: the type of message
+        - command: the specific command player sends
+        - data: any data in the message (if required)
+        - priority: the order of message in message queue, lower value for higher priority
     """
     source: int
     type: int
@@ -45,9 +44,3 @@ Message Commands
 CONNECT = 1
 DISCONNECT = 2
 MOVE = 100
-# sensor message
-SENSE_SOUND = 200
-SENSE_HEAT = 201
-SENSE_LIDAR = 202
-SENSE_DRONE = 203
-SENSE_SCOUT_CAR = 204

@@ -34,7 +34,7 @@ class StraightWeapon(interface.IWeapon):
     """
     def __init__(self, config: StraightWeaponConfig):
         self.config = config
-        self.message = -1
+        self.message = -1   # the direction of firing
 
     def fire_weapon(self, weapons, robot) -> None:
         """
@@ -94,7 +94,7 @@ class ProjectileWeapon(interface.IWeapon):
     """
     def __init__(self, config: ProjectileWeaponConfig):
         self.config = config
-        self.message = (-1, -1)
+        self.message = (-1, -1)     # the direction and range of firing
 
     def fire_weapon(self, weapons, robot) -> None:
         """

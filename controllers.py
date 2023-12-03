@@ -100,6 +100,9 @@ class SensorController:
         # use the sensor
         sensor.detect_signal(self.game.sensors, robot)
 
+        # update sensor to robot
+        robot.sensors[player_message.command] = sensor
+
 
 class WeaponController:
     """
@@ -129,6 +132,9 @@ class WeaponController:
 
         weapon.fire_weapon(self.game.weapons, robot)
 
+        # update weapon to robot
+        robot.weapons[player_message.command] = weapon
+
 
 class GadgetController:
     """
@@ -150,11 +156,15 @@ class GadgetController:
         :param player_message: the player message to be executed
         :return: None
         """
-        gadget = player_message.data  # the gadget object
         robot = self.game.players[player_message.source]    # the robot to control
+        gadget = player_message.data  # the gadget object
 
         # check robot state
         if robot.get_state() != game_config.STATE_NORMAL:
             return
 
+        # use gadget
         gadget.use_gadget(self.game.gadgets, robot)
+
+        # update gadget to robot
+        robot.gadgets[player_message.command] = gadget

@@ -3,7 +3,6 @@ Handle sensor detection
 """
 from battlefield import Battlefield
 import Items.sensors as sensors
-import Framework.message as message
 
 
 class RobotSensor:
@@ -57,9 +56,10 @@ class RobotSensor:
         for i in range(0, len(self.battlefield.field)):
             for j in range(0, len(self.battlefield.field[0])):
                 if y - sensor.config.radius <= i <= y + sensor.config.radius and x - sensor.config.radius <= j <= x + sensor.config.radius:
-                    if sensor.message == message.SENSE_SOUND:
+                    # TODO: refactor this part if more types of signals are added
+                    if isinstance(sensor, sensors.SoundSensor):
                         result[i][j] = self.battlefield.get_grid(j, i).get_sound()
-                    elif sensor.message == message.SENSE_HEAT:
+                    elif isinstance(sensor, sensors.HeatSensor):
                         result[i][j] = self.battlefield.get_grid(j, i).get_heat()
                     else:
                         print('Unrecognized signal type')

@@ -37,6 +37,7 @@ def select_move_command(net: Network):
 
     # send message
     direction = input_code.get_direction_message(command_input)
+    print("send move command, wait for other players...")
     return net.send(Message(net.get_player().get_id(), message.TYPE_MOVE, message.MOVE, direction, player.move_speed))
 
 
@@ -55,13 +56,13 @@ def select_sense_command(net: Network):
         index = int(input(prompt)) - 1
         sensor = player.sensors[index].select_sensor_parameter()  # input additional parameters for sensor
     except Exception as e:  # prevent invalid index
-        print("Invalid Command")
         print(e)
         return None
 
     # send message
     # sensors always have the lowest priority
-    return net.send(Message(net.get_player().get_id(), message.TYPE_SENSE, sensor.message, sensor, INFINITY))
+    print("send sense command, wait for other players...")
+    return net.send(Message(net.get_player().get_id(), message.TYPE_SENSE, index, sensor, INFINITY))
 
 
 def select_fire_command(net: Network):
@@ -79,13 +80,13 @@ def select_fire_command(net: Network):
         index = int(input(prompt)) - 1
         weapon = player.weapons[index].select_weapon_parameter()  # input additional parameters for weapon
     except Exception as e:  # prevent invalid index
-        print("Invalid Command")
         print(e)
         return None
 
     # send message
     # calculate priority: 100 - weapon.reaction_time
-    return net.send(Message(net.get_player().get_id(), message.TYPE_FIRE, weapon.message, weapon,
+    print("send fire command, wait for other players...")
+    return net.send(Message(net.get_player().get_id(), message.TYPE_FIRE, index, weapon,
                             max(0, 100 - weapon.config.reaction_time)))
 
 
@@ -104,20 +105,20 @@ def select_gadget_command(net: Network):
         index = int(input(prompt)) - 1
         gadget = player.gadgets[index].select_gadget_parameter()  # input additional parameters for gadget
     except Exception as e:  # prevent invalid index
-        print("Invalid Command")
         print(e)
         return None
 
     # send message
     # calculate priority: 100 - gadget.reaction_time
-    return net.send(Message(net.get_player().get_id(), message.TYPE_GADGET, gadget.message, gadget,
+    print("send gadget command, wait for other players...")
+    return net.send(Message(net.get_player().get_id(), message.TYPE_GADGET, index, gadget,
                             max(0, 100 - gadget.config.reaction_time)))
 
 
 if __name__ == '__main__':
     # TODO check the validity of robot config
 
-    net = Network("100.67.80.200")
+    net = Network("100.71.94.232")
     net.connect(default_config)
     player = net.get_player()  # receive the initialized player robot
     print("You are player " + str(player.get_id()))
