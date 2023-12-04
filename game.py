@@ -77,10 +77,11 @@ class Game:
 
         :return: None
         """
+        # reduce signal in battlefield
         self.battlefield.reduce_sound_and_heat(game_config.SOUND_REDUCTION, game_config.HEAT_REDUCTION)
 
         for player_id in self.players:
-            # clear information list
+            # reset player information list and vision
             self.players[player_id].clear_info()
             self.players[player_id].vision = []
 
@@ -175,7 +176,7 @@ class MessageCenter:
         :return: None
         """
         self.complete_round = False
-        self.message_queue.put((player_message.priority, player_message))
+        self.message_queue.put((-player_message.priority, player_message))
         self.num_players_went += 1  # add one player who makes its move
         if self.num_players_went == self.num_players:   # execute messages when all players made action
             self.execute_commands()

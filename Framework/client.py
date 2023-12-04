@@ -16,8 +16,6 @@ import message
 from message import Message
 import input_code
 
-INFINITY = 1000000000  # a psudo-infinity value for sensor priority
-
 
 def select_move_command(net: Network):
     """
@@ -62,7 +60,7 @@ def select_sense_command(net: Network):
     # send message
     # sensors always have the lowest priority
     print("send sense command, wait for other players...")
-    return net.send(Message(net.get_player().get_id(), message.TYPE_SENSE, index, sensor, INFINITY))
+    return net.send(Message(net.get_player().get_id(), message.TYPE_SENSE, index, sensor, 0))
 
 
 def select_fire_command(net: Network):
@@ -86,8 +84,7 @@ def select_fire_command(net: Network):
     # send message
     # calculate priority: 100 - weapon.reaction_time
     print("send fire command, wait for other players...")
-    return net.send(Message(net.get_player().get_id(), message.TYPE_FIRE, index, weapon,
-                            max(0, 100 - weapon.config.reaction_time)))
+    return net.send(Message(net.get_player().get_id(), message.TYPE_FIRE, index, weapon, weapon.config.reaction_time))
 
 
 def select_gadget_command(net: Network):
@@ -111,14 +108,13 @@ def select_gadget_command(net: Network):
     # send message
     # calculate priority: 100 - gadget.reaction_time
     print("send gadget command, wait for other players...")
-    return net.send(Message(net.get_player().get_id(), message.TYPE_GADGET, index, gadget,
-                            max(0, 100 - gadget.config.reaction_time)))
+    return net.send(Message(net.get_player().get_id(), message.TYPE_GADGET, index, gadget, gadget.config.reaction_time))
 
 
 if __name__ == '__main__':
     # TODO check the validity of robot config
 
-    net = Network("100.71.94.232")
+    net = Network("100.67.86.203")
     net.connect(default_config)
     player = net.get_player()  # receive the initialized player robot
     print("You are player " + str(player.get_id()))
