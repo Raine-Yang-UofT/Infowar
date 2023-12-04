@@ -97,7 +97,7 @@ def select_gadget_command(net: Network):
     print("Select the gadget")
     prompt = ''
     for i in range(0, len(player.gadgets)):
-        prompt += f'{i + 1}:{player.gadgets[i].config.name} ({player.gadgets[i].remain}/{player.gadgets[i].total}) '
+        prompt += f'{i + 1}: {player.gadgets[i].config.name} ({player.gadgets[i].remain}/{player.gadgets[i].total}) '
     try:
         index = int(input(prompt)) - 1
         gadget = player.gadgets[index].select_gadget_parameter()  # input additional parameters for gadget

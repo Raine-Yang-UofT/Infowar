@@ -83,6 +83,8 @@ class EMPBombConfig:
         - min_launch_range: the minimum range to launch gadget
         - max_launch_range: the maximum range to launch gadget
         - impact_radius: the impact radius (circular) of gadget
+        - sound_emission: the sound emission of the gadget
+        - heat_emission: the heat emission of the gadget
         - reaction_time: the reaction speed of gadget (determines message priority)
         - total_use: the total number of times the gadget can be used
     """
@@ -90,6 +92,8 @@ class EMPBombConfig:
     min_launch_range: int
     max_launch_range: int
     impact_radius: int
+    sound_emission: int
+    heat_emission: int
     reation_time: int
     total_use: int
 
@@ -114,7 +118,7 @@ class EMPBomb(interface.IGadget):
         :return: None
         """
         self.remain -= 1
-
+        robot.receive_info(gadgets.throw_EMP_bomb(robot.get_pos()[0], robot.get_pos()[1], self))
 
     def select_gadget_parameter(self):
         """
@@ -126,12 +130,7 @@ class EMPBomb(interface.IGadget):
         if not self.check_remaining_use():
             raise input_code.InvalidCommandException("No remaining use of EMP bomb")
 
-        command_input = input("Select the direction to throw EMP bomb:" +
-                              input_code.UP + ": up  " + input_code.DOWN + ": down  " + input_code.LEFT + ": left  " + input_code.RIGHT + ": right")
-        if command_input not in [input_code.UP, input_code.DOWN, input_code.LEFT, input_code.RIGHT]:
-            raise input_code.InvalidCommandException()
-        self.message = input_code.get_direction_message(command_input)
-        return self
+        return prompt.select_direction_and_range(self, "Select the direction to throw EMP bomb:", "Select the range to throw EMP bomb:")
 
     def check_remaining_use(self) -> bool:
         """
@@ -152,3 +151,5 @@ class EMPBomb(interface.IGadget):
 
 # gadget objects
 deployable_barricade = DeployableBarricade(DeployableBarricadeConfig('deployable barricade', 200, 5, 10, 2))
+EMP_bomb = EMPBomb(EMPBombConfig('EMP bomb', 3, 8, 2, 3, 3, 100, 3))
+

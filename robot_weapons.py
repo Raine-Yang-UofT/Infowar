@@ -102,13 +102,9 @@ class RobotWeapons:
             px += weapon.range
 
         # examine the grids in the range
-        for i in range(0, len(self.battlefield.field[0])):
-            for j in range(0, len(self.battlefield.field)):
-                # TODO: this code has poor performance for large grid, refactor it
+        for i in range(max(0, px - weapon.config.impact_radius), min(len(self.battlefield.field[0]), px + weapon.config.impact_radius + 1)):
+            for j in range(max(0, py - weapon.config.impact_radius), min(len(self.battlefield.field), py + weapon.config.impact_radius + 1)):
                 if (i - px) ** 2 + (j - py) ** 2 <= weapon.config.impact_radius ** 2:
-                    # prevent index out of bound
-                    if i < 0 or i >= len(self.battlefield.field[0]) or j < 0 or j >= len(self.battlefield.field):
-                        continue
                     # deals damage to the target
                     occupant = self.battlefield.get_grid(i, j).get_occupant()
                     if isinstance(occupant, IDamageable):

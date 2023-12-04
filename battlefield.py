@@ -188,3 +188,5 @@ class Battlefield(IDisplayable):
         :return: a string representation of the battlefield
         """
         return [[grid.display() for grid in row] for row in self.field]
+
+
