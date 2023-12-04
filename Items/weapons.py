@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import damage as dmg
 from Framework import interface
-from Framework import input_code
+from Items import prompt_template as prompt
 
 
 @dataclass(frozen=True)
@@ -34,7 +34,7 @@ class StraightWeapon(interface.IWeapon):
     """
     def __init__(self, config: StraightWeaponConfig):
         self.config = config
-        self.message = -1   # the direction of firing
+        self.direction = -1   # the direction of firing
 
     def fire_weapon(self, weapons, robot) -> None:
         """
@@ -54,12 +54,7 @@ class StraightWeapon(interface.IWeapon):
 
         :return: a copy of weapon object with updated parameters
         """
-        command_input = input("Select the direction of firing:" +
-                              input_code.UP + ": up  " + input_code.DOWN + ": down  " + input_code.LEFT + ": left  " + input_code.RIGHT + ": right")
-        if command_input not in [input_code.UP, input_code.DOWN, input_code.LEFT, input_code.RIGHT]:
-            raise input_code.InvalidCommandException()
-        self.message = input_code.get_direction_message(command_input)  # update weapon message as firing direction
-        return self
+        return prompt.select_direction(self, "Select the direction of firing:")
 
 
 @dataclass(frozen=True)
@@ -94,7 +89,9 @@ class ProjectileWeapon(interface.IWeapon):
     """
     def __init__(self, config: ProjectileWeaponConfig):
         self.config = config
-        self.message = (-1, -1)     # the direction and range of firing
+        # the direction and range of firing
+        self.direction = -1
+        self.range = -1
 
     def fire_weapon(self, weapons, robot) -> None:
         """
@@ -115,19 +112,7 @@ class ProjectileWeapon(interface.IWeapon):
 
         :return: a copy of weapon object with updated parameters
         """
-        command_input = input("Select the direction of firing:" +
-                              input_code.UP + ": up  " + input_code.DOWN + ": down  " + input_code.LEFT + ": left  " + input_code.RIGHT + ": right")
-        range_input = input("Select the range of firing: (range between " + str(self.config.min_launch_range) + " - " + str(self.config.max_launch_range) + ")")
-        if range_input.isdigit():
-            range_input = int(range_input)
-        else:
-            raise input_code.InvalidCommandException()
-
-        if ((command_input not in [input_code.UP, input_code.DOWN, input_code.LEFT, input_code.RIGHT])
-                or range_input < self.config.min_launch_range or range_input > self.config.max_launch_range):
-            raise input_code.InvalidCommandException()
-        self.message = (input_code.get_direction_message(command_input), range_input)  # update weapon message as firing direction and range
-        return self
+        return prompt.select_direction_and_range(self, "Select the direction of firing:", "Select the range of firing:")
 
 
 # weapons

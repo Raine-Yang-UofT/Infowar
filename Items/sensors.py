@@ -4,6 +4,7 @@ Sensor items
 from dataclasses import dataclass
 from Framework import interface
 from Framework import input_code
+from Items import prompt_template as prompt
 
 
 @dataclass(frozen=True)
@@ -224,14 +225,7 @@ class ScoutCar(interface.ISensor):
 
         :return: the scout car with updated parameters
         """
-        direction = input("Enter (w, a, s, d) to map the direction of scout car: ")
-        if direction not in ['w', 'a', 's', 'd']:
-            print("Invalid scout car direction, make sure the direction is one of (w, a, s, d)")
-            raise input_code.InvalidCommandException()
-        # update scout car direction
-        print("scout car direction updated")
-        self.direction = direction
-        return self
+        return prompt.select_direction(self, "Select the direction to move scout car:")
 
 
 # sensor objects

@@ -13,12 +13,3 @@ class Event:
     start_round: int
     end_round: int
     callback: callable
-
-    def __lt__(self, other):
-        """
-        Compare two events by their start round
-
-        :param other: the other event to compare
-        :return: True if self < other, False otherwise
-        """
-        return self.start_round < other.start_round

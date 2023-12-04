@@ -31,13 +31,13 @@ class RobotWeapons:
         # set shooting direction
         dx, dy = 0, 0
         px, py = x, y
-        if weapon.message == message.UP:
+        if weapon.direction == message.UP:
             dy = -1
-        elif weapon.message == message.DOWN:
+        elif weapon.direction == message.DOWN:
             dy = 1
-        elif weapon.message == message.LEFT:
+        elif weapon.direction == message.LEFT:
             dx = -1
-        elif weapon.message == message.RIGHT:
+        elif weapon.direction == message.RIGHT:
             dx = 1
 
         distance = 1
@@ -92,18 +92,19 @@ class RobotWeapons:
 
         # set target location
         px, py = x, y
-        if weapon.message[0] == message.UP:
-            py -= weapon.message[1]
-        elif weapon.message[0] == message.DOWN:
-            py += weapon.message[1]
-        elif weapon.message[0] == message.LEFT:
-            px -= weapon.message[1]
-        elif weapon.message[0] == message.RIGHT:
-            px += weapon.message[1]
+        if weapon.direction == message.UP:
+            py -= weapon.range
+        elif weapon.direction == message.DOWN:
+            py += weapon.range
+        elif weapon.direction == message.LEFT:
+            px -= weapon.range
+        elif weapon.direction == message.RIGHT:
+            px += weapon.range
 
         # examine the grids in the range
         for i in range(0, len(self.battlefield.field[0])):
             for j in range(0, len(self.battlefield.field)):
+                # TODO: this code has poor performance for large grid, refactor it
                 if (i - px) ** 2 + (j - py) ** 2 <= weapon.config.impact_radius ** 2:
                     # prevent index out of bound
                     if i < 0 or i >= len(self.battlefield.field[0]) or j < 0 or j >= len(self.battlefield.field):

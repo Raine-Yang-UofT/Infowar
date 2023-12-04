@@ -8,6 +8,7 @@ from battlefield import Battlefield
 from robot import Robot
 from Framework import message
 from Framework.message import Message
+from Framework.event import Event
 from queue import PriorityQueue
 from Configurations import game_config
 from controllers import MoveController, SensorController, WeaponController, GadgetController
@@ -23,6 +24,7 @@ class Game:
         :param num_players: the number of players to start a game
         """
         self.game_id = game_id
+        self.round_count = 1
         self.num_players = num_players
         self.battlefield = Battlefield(game_config.FIELD_ROW, game_config.FIELD_COL)
         self.sensors = robot_sensors.RobotSensor(self.battlefield)  # the sensors in the game
@@ -79,6 +81,8 @@ class Game:
         """
         # reduce signal in battlefield
         self.battlefield.reduce_sound_and_heat(game_config.SOUND_REDUCTION, game_config.HEAT_REDUCTION)
+        # add round count
+        self.round_count += 1
 
         for player_id in self.players:
             # reset player information list and vision
@@ -210,3 +214,42 @@ class MessageCenter:
 
         print('complete round')
         self.complete_round = True  # all player commands have been processed, time to send message to clients
+
+
+class EventHandler:
+    """
+    The class that handles events
+    """
+
+    def __init__(self, game):
+        """
+        Initialize the EventHandler
+
+        :param game: the game being played
+        """
+        self.game = game
+        self.event_queue = PriorityQueue()
+
+    def receive_event(self, event: Event) -> None:
+        """
+        Receive an event and put it in the event queue
+
+        :param event: the event to receive
+        :return: None
+        """
+        self.event_queue.put((event.start_round, event))
+
+    def execute_events(self, round_count: int) -> None:
+        """
+        Execute events in the round
+
+        :param round_count: the current round in the game
+        """
+        # no events to execute
+        if self.event_queue.empty():
+            return
+
+        # execute events corresponding to the round
+        while self.event_queue.queue[0][0] == round_count:
+            event = self.event_queue.get()
+            event.callback()
