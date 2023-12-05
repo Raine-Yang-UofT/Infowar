@@ -31,6 +31,7 @@ class MoveController:
 
         # check robot state
         if not robot.get_state().move:
+            print("The robot's movement is interrupted!")
             return
 
         x, y = robot.get_pos()  # the player's current location
@@ -94,6 +95,7 @@ class SensorController:
 
         # check robot state
         if not robot.get_state().sensor:
+            robot.receive_info("The robot's sensor is interrupted!")
             return
 
         # use the sensor
@@ -127,6 +129,7 @@ class WeaponController:
 
         # check robot state
         if not robot.get_state().weapon:
+            robot.receive_info("The robot's weapon is interrupted!")
             return
 
         weapon.fire_weapon(self.game.weapons, robot)
@@ -160,6 +163,7 @@ class GadgetController:
 
         # check robot state
         if not robot.get_state().gadget:
+            robot.receive_info("The robot's gadget is interrupted!")
             return
 
         # use gadget

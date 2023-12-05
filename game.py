@@ -27,9 +27,10 @@ class Game:
         self.round_count = 1
         self.num_players = num_players
         self.battlefield = Battlefield(game_config.FIELD_ROW, game_config.FIELD_COL)
-        self.sensors = robot_sensors.RobotSensor(self.battlefield)  # the sensors in the game
-        self.weapons = robot_weapons.RobotWeapons(self.battlefield)  # the weapons in the game
-        self.gadgets = robot_gadgets.RobotGadgets(self.battlefield)  # the gadgets in the game
+        self.event_handler = EventHandler(self)  # the event handler in the game
+        self.sensors = robot_sensors.RobotSensor(self)  # the sensors in the game
+        self.weapons = robot_weapons.RobotWeapons(self)  # the weapons in the game
+        self.gadgets = robot_gadgets.RobotGadgets(self)  # the gadgets in the game
         self.battlefield.initialize_field(game_config.BARRICADE_COVERAGE, game_config.HARD_BARRICADE_COVERAGE, game_config.BARRICADE_HP_RANGE,
                                           game_config.BARRICADE_ARMOR_RANGE)
         self.players = {}  # the dict of all players
@@ -88,6 +89,12 @@ class Game:
             # reset player information list and vision
             self.players[player_id].clear_info()
             self.players[player_id].vision = []
+            # refill robot gadgets after a certain number of rounds
+            if self.round_count % game_config.GADGET_RESTORE_PERIOD == 0:
+                self.players[player_id].refill_gadgets()
+
+        # update events
+        self.event_handler.execute_events(self.round_count)
 
         # ONLY FOR TESTING: print battlefield status
         print_field(self.battlefield)
@@ -245,11 +252,9 @@ class EventHandler:
 
         :param round_count: the current round in the game
         """
-        # no events to execute
-        if self.event_queue.empty():
-            return
-
         # execute events corresponding to the round
-        while self.event_queue.queue[0][0] == round_count:
-            event = self.event_queue.get()
-            event.callback()
+        while not self.event_queue.empty() and self.event_queue.queue[0][0] <= round_count:
+            event = self.event_queue.get()[1]
+            if round_count < event.end_round:
+                event.callback()
+                self.event_queue.put((round_count, event))

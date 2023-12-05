@@ -1,14 +1,14 @@
 """
 Handle sensor detection
 """
-from battlefield import Battlefield
 import Items.sensors as sensors
 
 
 class RobotSensor:
 
-    def __init__(self, field: Battlefield):
-        self.battlefield = field
+    def __init__(self, game):
+        self.game = game
+        self.battlefield = game.battlefield
 
     def display_player_vision(self, x: int, y: int) -> list[list[str]]:
         """

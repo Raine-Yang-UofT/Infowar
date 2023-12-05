@@ -5,12 +5,15 @@ from battlefield import Battlefield
 import Framework.message as message
 import barricade
 from Items import gadgets
+from Framework.event import Event
 
 
 class RobotGadgets:
 
-    def __init__(self, field: Battlefield):
-        self.battlefield = field
+    def __init__(self, game) -> None:
+        self.game = game
+        self.battlefield = game.field
+        self.event_handler = game.event_handler
 
     def deploy_barricade(self, x: int, y: int, gadget: gadgets.DeployableBarricade) -> str:
         """
@@ -39,7 +42,7 @@ class RobotGadgets:
 
         return f'Deploy barricade at ({px}, {py})'
 
-    def throw_EMP_bomb(self, x: int, y: int, gadget: gadgets.EMPBomb) -> str:
+    def throw_EMP_bomb(self, x: int, y: int, gadget: gadgets.EMPBomb) -> []:
         """
         Throw an EMP bomb at a certain direction and range from (x, y)
 
@@ -64,14 +67,14 @@ class RobotGadgets:
 
         # find the targets in range
         targets = []
+        from robot import Robot  # temporarily import robot
         for i in range(max(0, px - gadget.config.impact_radius), min(len(self.battlefield.field[0]), px + gadget.config.impact_radius + 1)):
             for j in range(max(0, py - gadget.config.impact_radius), min(len(self.battlefield.field), py + gadget.config.impact_radius + 1)):
                 if (i - px) ** 2 + (j - py) ** 2 <= gadget.config.impact_radius ** 2:
-                    targets.append((i, j))
+                    occupant = self.battlefield.get_grid(i, j).get_occupant()
+                    if isinstance(occupant, Robot):
+                        targets.append("EMP bomb hit " + occupant.get_name() + '!')
+                        # add event to event handler
+                        self.event_handler.receive_event(Event(self.game.round_count, self.game.round_count + 1, occupant.state.set_normal()))
 
-        # disable the targets
-        for target in targets:
-            pass
-            # TODO: add event to disable the target
-
-        return f'Throw EMP bomb at ({px}, {py})'
+        return targets

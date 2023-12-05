@@ -1,7 +1,6 @@
 """
 Handle weapon detection
 """
-from battlefield import Battlefield
 from Framework.interface import IDamageable
 from Items import weapons
 import Framework.message as message
@@ -11,8 +10,9 @@ from dataclasses import replace
 
 class RobotWeapons:
 
-    def __init__(self, battlefield: Battlefield):
-        self.battlefield = battlefield
+    def __init__(self, game):
+        self.game = game
+        self.battlefield = game.battlefield
 
     def shoot_straight_weapon(self, x: int, y: int, weapon: weapons.StraightWeapon) -> str:
         """

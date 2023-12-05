@@ -294,6 +294,15 @@ class Robot(IDisplayable, IDamageable):
         """
         print_list_helper(self.map)
 
+    def refill_gadgets(self) -> None:
+        """
+        Refill all gadgets
+
+        :return: None
+        """
+        for gadget in self.gadgets:
+            gadget.reset_remaining_use()
+
     def get_damage(self, damage: Damage):
         """
         Receive damage. Override get_damage() in IDamageable
