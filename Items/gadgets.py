@@ -94,7 +94,7 @@ class EMPBombConfig:
     impact_radius: int
     sound_emission: int
     heat_emission: int
-    reation_time: int
+    reaction_time: int
     total_use: int
 
 
@@ -118,7 +118,10 @@ class EMPBomb(interface.IGadget):
         :return: None
         """
         self.remain -= 1
-        robot.receive_info(gadgets.throw_EMP_bomb(robot.get_pos()[0], robot.get_pos()[1], self))
+        results = gadgets.throw_EMP_bomb(robot.get_pos()[0], robot.get_pos()[1], self)
+        if results is not None:
+            for info in results:
+                robot.receive_info(info)
 
     def select_gadget_parameter(self):
         """

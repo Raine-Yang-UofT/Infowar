@@ -1,7 +1,6 @@
 """
 Handle gadget use
 """
-from battlefield import Battlefield
 import Framework.message as message
 import barricade
 from Items import gadgets
@@ -12,7 +11,7 @@ class RobotGadgets:
 
     def __init__(self, game) -> None:
         self.game = game
-        self.battlefield = game.field
+        self.battlefield = game.battlefield
         self.event_handler = game.event_handler
 
     def deploy_barricade(self, x: int, y: int, gadget: gadgets.DeployableBarricade) -> str:
@@ -53,13 +52,13 @@ class RobotGadgets:
         """
         px, py = x, y
         if gadget.direction == message.UP:
-            py -= 1
+            py -= gadget.range
         elif gadget.direction == message.DOWN:
-            py += 1
+            py += gadget.range
         elif gadget.direction == message.LEFT:
-            px -= 1
+            px -= gadget.range
         elif gadget.direction == message.RIGHT:
-            px += 1
+            px += gadget.range
 
         # generate sound and heat at starting position
         self.battlefield.generate_sound(x, y, gadget.config.sound_emission)
@@ -74,6 +73,8 @@ class RobotGadgets:
                     occupant = self.battlefield.get_grid(i, j).get_occupant()
                     if isinstance(occupant, Robot):
                         targets.append("EMP bomb hit " + occupant.get_name() + '!')
+                        # disable robot
+                        occupant.state.set_state(sensor=False, weapon=False, gadget=False)
                         # add event to event handler
                         self.event_handler.receive_event(Event(self.game.round_count, self.game.round_count + 1, occupant.state.set_normal()))
 
