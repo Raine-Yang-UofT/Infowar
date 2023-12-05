@@ -82,8 +82,6 @@ class Game:
         """
         # reduce signal in battlefield
         self.battlefield.reduce_sound_and_heat(game_config.SOUND_REDUCTION, game_config.HEAT_REDUCTION)
-        # add round count
-        self.round_count += 1
 
         for player_id in self.players:
             # reset player information list and vision
@@ -102,6 +100,9 @@ class Game:
         print_sound(self.battlefield)
         print('---')
         print_heat(self.battlefield)
+
+        # add round count
+        self.round_count += 1
 
     def reset_game_update(self) -> None:
         """
@@ -254,7 +255,7 @@ class EventHandler:
         """
         # execute events corresponding to the round
         while not self.event_queue.empty() and self.event_queue.queue[0][0] <= round_count:
-            event = self.event_queue.get()[1]
+            event_round, event = self.event_queue.get()
+            event.callback()
             if round_count < event.end_round:
-                event.callback()
-                self.event_queue.put((round_count, event))
+                self.event_queue.put((event_round, event))

@@ -154,5 +154,5 @@ class EMPBomb(interface.IGadget):
 
 # gadget objects
 deployable_barricade = DeployableBarricade(DeployableBarricadeConfig('deployable barricade', 200, 5, 10, 2))
-EMP_bomb = EMPBomb(EMPBombConfig('EMP bomb', 3, 8, 2, 3, 3, 100, 3))
+EMP_bomb = EMPBomb(EMPBombConfig('EMP bomb', 0, 8, 2, 3, 3, 100, 3))
 

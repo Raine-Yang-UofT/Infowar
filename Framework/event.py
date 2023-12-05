@@ -13,3 +13,6 @@ class Event:
     start_round: int
     end_round: int
     callback: callable
+
+    def __lt__(self, other):
+        return self.start_round < other.start_round
