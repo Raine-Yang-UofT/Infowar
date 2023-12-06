@@ -75,9 +75,9 @@ class DeployableBarricade(interface.IGadget):
 
 
 @dataclass(frozen=True)
-class EMPBombConfig:
+class ProjectileGadgetConfig:
     """
-    An EMP bomb that can be thrown to temporarily disable robots in a range
+    A gadget that can be thrown as a projectile
 
         - name: the name of gadget
         - min_launch_range: the minimum range to launch gadget
@@ -98,14 +98,19 @@ class EMPBombConfig:
     total_use: int
 
 
-class EMPBomb(interface.IGadget):
+class ProjectileGadget(interface.IGadget):
     """
-    The EMP bomb gadget class
+    The projectile gadget class
+    Projectile gadgets can be thrown to a certain location and causes certain effect
+
+    :param config: the configuration of the gadget
+    :param execution_function: the function to execute the gadget
     """
-    def __init__(self, config: EMPBombConfig):
+    def __init__(self, config: ProjectileGadgetConfig, execution_function):
         self.config = config
         self.remain = config.total_use
         self.total = config.total_use
+        self.execution_function = execution_function
         self.direction = -1
         self.range = -1
 
@@ -118,7 +123,7 @@ class EMPBomb(interface.IGadget):
         :return: None
         """
         self.remain -= 1
-        results = gadgets.throw_EMP_bomb(robot.get_pos()[0], robot.get_pos()[1], self)
+        results = gadgets.throw_projectile_gadget(robot.get_pos()[0], robot.get_pos()[1], self)
         if results is not None:
             for info in results:
                 robot.receive_info(info)
@@ -131,9 +136,9 @@ class EMPBomb(interface.IGadget):
         """
         # check remaining use
         if not self.check_remaining_use():
-            raise input_code.InvalidCommandException("No remaining use of EMP bomb")
+            raise input_code.InvalidCommandException(f"No remaining use of {self.config.name}")
 
-        return prompt.select_direction_and_range(self, "Select the direction to throw EMP bomb:", "Select the range to throw EMP bomb:")
+        return prompt.select_direction_and_range(self, f"Select the direction to throw {self.config.name}:", f"Select the range to throw {self.config.name}:")
 
     def check_remaining_use(self) -> bool:
         """
@@ -163,16 +168,25 @@ deployable_barricade = DeployableBarricade(
     )
 )
 
-EMP_bomb = EMPBomb(
-    EMPBombConfig(
+
+# the effects of EMP bomb
+def EMP_effect(target):
+    target.states.set_state("move", False, 1)
+    target.states.set_state("sensor", False, 1)
+    target.states.set_state("weapon", False, 1)
+    target.states.set_state("gadget", False, 1)
+
+
+EMP_bomb = ProjectileGadget(
+    ProjectileGadgetConfig(
         name='EMP bomb',
-        min_launch_range=3,
+        min_launch_range=0,
         max_launch_range=8,
         impact_radius=2,
         sound_emission=3,
         heat_emission=3,
         reaction_time=80,
         total_use=3
-    )
+    ),
+    execution_function=EMP_effect
 )
-

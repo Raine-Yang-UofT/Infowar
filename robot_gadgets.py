@@ -41,13 +41,13 @@ class RobotGadgets:
 
         return f'Deploy barricade at ({px}, {py})'
 
-    def throw_EMP_bomb(self, x: int, y: int, gadget: gadgets.EMPBomb) -> []:
+    def throw_projectile_gadget(self, x: int, y: int, gadget: gadgets.ProjectileGadget) -> []:
         """
         Throw an EMP bomb at a certain direction and range from (x, y)
 
         :param x: the x-coordinate of the starting point
         :param y: the y-coordinate of the starting point
-        :param gadget: the EMP bomb to throw
+        :param gadget: the projectile gadget to throw
         :return: result on throwing
         """
         px, py = x, y
@@ -72,11 +72,8 @@ class RobotGadgets:
                 if (i - px) ** 2 + (j - py) ** 2 <= gadget.config.impact_radius ** 2:
                     occupant = self.battlefield.get_grid(i, j).get_occupant()
                     if isinstance(occupant, Robot):
-                        targets.append("EMP bomb hit " + occupant.get_name() + '!')
-                        # disable robot
-                        occupant.states.set_state("move", False, 1)
-                        occupant.states.set_state("sensor", False, 1)
-                        occupant.states.set_state("weapon", False, 1)
-                        occupant.states.set_state("gadget", False, 1)
+                        targets.append(f"{gadget.config.name} hit " + occupant.get_name() + '!')
+                        # execute the effect of gadget
+                        gadget.execution_function(occupant)
 
         return targets

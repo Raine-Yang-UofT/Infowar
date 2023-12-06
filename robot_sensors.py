@@ -2,6 +2,7 @@
 Handle sensor detection
 """
 import Items.sensors as sensors
+from Framework import message
 
 
 class RobotSensor:
@@ -123,13 +124,13 @@ class RobotSensor:
         car_x, car_y = x, y
         # determine movement direction
         vx, vy = 0, 0
-        if scout_car.direction == 'w' and car_y > 0:
+        if scout_car.direction == message.UP and car_y > 0:
             vy = -1
-        elif scout_car.direction == 'a' and car_x > 0:
+        elif scout_car.direction == message.LEFT and car_x > 0:
             vx = -1
-        elif scout_car.direction == 's' and car_y < len(self.battlefield.field) - 1:
+        elif scout_car.direction == message.DOWN and car_y < len(self.battlefield.field) - 1:
             vy = 1
-        elif scout_car.direction == 'd' and car_x < len(self.battlefield.field[0]) - 1:
+        elif scout_car.direction == message.RIGHT and car_x < len(self.battlefield.field[0]) - 1:
             vx = 1
 
         max_barricade_remove = scout_car.config.max_barricade_remove

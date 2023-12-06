@@ -204,7 +204,7 @@ class ScoutCar(interface.ISensor):
     """
     def __init__(self, config: ScoutCarConfig):
         self.config = config
-        self.direction = ''
+        self.direction = -1
 
     def detect_signal(self, sensors, robot) -> None:
         """

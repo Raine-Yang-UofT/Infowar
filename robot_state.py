@@ -63,7 +63,8 @@ class RobotState:
         :param recovery_time: the recovery time of the state
         :return: None
         """
-        self.state[state_type] = State(state, recovery_time)
+        current_recovery_time = self.state[state_type].recovery_time
+        self.state[state_type] = State(state, max(recovery_time, current_recovery_time))
 
     def update_state(self):
         """
