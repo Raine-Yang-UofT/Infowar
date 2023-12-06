@@ -229,8 +229,45 @@ class ScoutCar(interface.ISensor):
 
 
 # sensor objects
-heat_sensor = HeatSensor(SignalSensorConfig(name="heat sensor", radius=5))
-sound_sensor = SoundSensor(SignalSensorConfig(name="sound sensor", radius=5))
-lidar = Lidar(LidarConfig(name="lidar", radius=3, sound_emission=2, heat_emission=2))
-drone = Drone(DroneConfig(name='drone', radius=2, sound_emission=6, heat_emission=2, longest_range=10))
-scout_car = ScoutCar(ScoutCarConfig(name='scout car', radius=2, sound_emission=4, heat_emission=2, max_barricade_remove=2))
+heat_sensor = HeatSensor(
+    SignalSensorConfig(
+        name="heat sensor",
+        radius=5
+    )
+)
+
+sound_sensor = SoundSensor(
+    SignalSensorConfig(
+        name="sound sensor",
+        radius=5
+    )
+)
+
+lidar = Lidar(
+    LidarConfig(
+        name="lidar",
+        radius=3,
+        sound_emission=2,
+        heat_emission=2
+    )
+)
+
+drone = Drone(
+    DroneConfig(
+        name='drone',
+        radius=2,
+        sound_emission=6,
+        heat_emission=2,
+        longest_range=10
+    )
+)
+
+scout_car = ScoutCar(
+    ScoutCarConfig(
+        name='scout car',
+        radius=2,
+        sound_emission=4,
+        heat_emission=2,
+        max_barricade_remove=2
+    )
+)

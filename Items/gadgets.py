@@ -153,6 +153,26 @@ class EMPBomb(interface.IGadget):
 
 
 # gadget objects
-deployable_barricade = DeployableBarricade(DeployableBarricadeConfig('deployable barricade', 200, 5, 10, 2))
-EMP_bomb = EMPBomb(EMPBombConfig('EMP bomb', 0, 8, 2, 3, 3, 100, 3))
+deployable_barricade = DeployableBarricade(
+    DeployableBarricadeConfig(
+        name='deployable barricade',
+        HP=200,
+        armor=5,
+        reaction_time=10,
+        total_use=4
+    )
+)
+
+EMP_bomb = EMPBomb(
+    EMPBombConfig(
+        name='EMP bomb',
+        min_launch_range=3,
+        max_launch_range=8,
+        impact_radius=2,
+        sound_emission=3,
+        heat_emission=3,
+        reaction_time=80,
+        total_use=3
+    )
+)
 

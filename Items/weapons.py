@@ -116,13 +116,110 @@ class ProjectileWeapon(interface.IWeapon):
 
 
 # weapons
-assulter_rifle = StraightWeapon(StraightWeaponConfig("assulter rifle", dmg.Damage(80, 3), 0.75, 0.03, 8, 6, 4, 40))
-submachine_gun = StraightWeapon(StraightWeaponConfig("submachine gun", dmg.Damage(70, 2), 0.85, 0.03, 6, 5, 3, 65))
-pistol = StraightWeapon(StraightWeaponConfig("pistol", dmg.Damage(60, 2), 0.95, 0.02, 5, 4, 2, 90))
-sniper_rifle = StraightWeapon(StraightWeaponConfig("sniper_rifle", dmg.Damage(100, 4), 0.2, -0.03, 12, 6, 5, 10))
-shotgun = StraightWeapon(StraightWeaponConfig("shotgun", dmg.Damage(100, 1), 1, 0.15, 4, 7, 4, 30))
+assulter_rifle = StraightWeapon(
+    StraightWeaponConfig(
+        name="assulter rifle",
+        damage=dmg.Damage(80, 3),
+        accuracy=0.75,
+        accuracy_decay=0.03,
+        range=8,
+        sound_emission=6,
+        heat_emission=4,
+        reaction_time=40
+    )
+)
+
+submachine_gun = StraightWeapon(
+    StraightWeaponConfig(
+        name="submachine gun",
+        damage=dmg.Damage(70, 2),
+        accuracy=0.85,
+        accuracy_decay=0.03,
+        range=6,
+        sound_emission=5,
+        heat_emission=3,
+        reaction_time=65
+    )
+)
+
+pistol = StraightWeapon(
+    StraightWeaponConfig(
+        name="pistol",
+        damage=dmg.Damage(60, 2),
+        accuracy=0.95,
+        accuracy_decay=0.02,
+        range=5,
+        sound_emission=4,
+        heat_emission=2,
+        reaction_time=90
+    )
+)
+
+sniper_rifle = StraightWeapon(
+    StraightWeaponConfig(
+        name="sniper_rifle",
+        damage=dmg.Damage(100, 4),
+        accuracy=0.2,
+        accuracy_decay=-0.03,
+        range=12,
+        sound_emission=6,
+        heat_emission=5,
+        reaction_time=10
+    )
+)
+
+shotgun = StraightWeapon(
+    StraightWeaponConfig(
+        name="shotgun",
+        damage=dmg.Damage(100, 1),
+        accuracy=1,
+        accuracy_decay=0.15,
+        range=4,
+        sound_emission=7,
+        heat_emission=4,
+        reaction_time=30
+    )
+)
 
 # projectile weapons
-impact_grenade = ProjectileWeapon(ProjectileWeaponConfig("impact grenade", dmg.Damage(40, 1), 4, 6, 3, 10, 4, 2, 60))
-frag_grenade = ProjectileWeapon(ProjectileWeaponConfig("frag grenade", dmg.Damage(60, 2), 3, 6, 2, 20, 5, 3, 30))
-breaching_grenade = ProjectileWeapon(ProjectileWeaponConfig("breaching grenade", dmg.Damage(5, 5), 3, 5, 2, 0, 5, 2, 80))
+impact_grenade = ProjectileWeapon(
+    ProjectileWeaponConfig(
+        name="impact grenade",
+        damage=dmg.Damage(40, 1),
+        min_launch_range=4,
+        max_launch_range=6,
+        impact_radius=3,
+        impact_damage_decay=10,
+        sound_emission=4,
+        heat_emission=2,
+        reaction_time=60
+    )
+)
+
+frag_grenade = ProjectileWeapon(
+    ProjectileWeaponConfig(
+        name="frag grenade",
+        damage=dmg.Damage(60, 2),
+        min_launch_range=3,
+        max_launch_range=6,
+        impact_radius=2,
+        impact_damage_decay=20,
+        sound_emission=5,
+        heat_emission=3,
+        reaction_time=30
+    )
+)
+
+breaching_grenade = ProjectileWeapon(
+    ProjectileWeaponConfig(
+        name="breaching grenade",
+        damage=dmg.Damage(5, 5),
+        min_launch_range=3,
+        max_launch_range=5,
+        impact_radius=2,
+        impact_damage_decay=0,
+        sound_emission=5,
+        heat_emission=2,
+        reaction_time=20
+    )
+)
