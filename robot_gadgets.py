@@ -74,8 +74,9 @@ class RobotGadgets:
                     if isinstance(occupant, Robot):
                         targets.append("EMP bomb hit " + occupant.get_name() + '!')
                         # disable robot
-                        occupant.state.set_state(sensor=False, weapon=False, gadget=False)
-                        # add event to event handler
-                        self.event_handler.receive_event(Event(self.game.round_count + 1, self.game.round_count + 1, occupant.state.set_normal))
+                        occupant.states.set_state("move", False, 1)
+                        occupant.states.set_state("sensor", False, 1)
+                        occupant.states.set_state("weapon", False, 1)
+                        occupant.states.set_state("gadget", False, 1)
 
         return targets

@@ -114,7 +114,7 @@ def select_gadget_command(net: Network):
 if __name__ == '__main__':
     # TODO check the validity of robot config
 
-    net = Network("100.67.89.127")
+    net = Network("100.71.91.212")
     net.connect(default_config)
     player = net.get_player()  # receive the initialized player robot
     print("You are player " + str(player.get_id()))
@@ -129,7 +129,7 @@ if __name__ == '__main__':
     # the game loop
     while True:
         # end client if game is over
-        if not player.get_state().alive:
+        if not player.get_state("alive"):
             print("You are dead, game over")
             # send disconnect message to server
             net.send(Message(net.get_player().get_id(), message.TYPE_DISCONNECT, message.DISCONNECT, None, -1))

@@ -7,7 +7,7 @@ from Configurations.robot_config import RobotConfig
 from grid import Grid
 import Configurations.game_config as game_config
 import random
-from dataclasses import dataclass
+from robot_state import RobotState, State
 
 
 def print_list_helper(lst: list[list]) -> None:
@@ -39,71 +39,6 @@ def print_sensor_helper(reading: list[list]) -> None:
             print()
 
 
-@dataclass
-class RobotState:
-    """
-    the class for robot states
-
-        - vision: whether the robot has vision
-        - move: whether the robot can move
-        - sensor: whether the robot can use sensors
-        - weapon: whether the robot can use weapons
-        - gadget: whether the robot can use gadgets
-        - alive: whether the robot is alive
-    """
-    vision: bool
-    move: bool
-    sensor: bool
-    weapon: bool
-    gadget: bool
-    alive: bool
-
-    def set_normal(self):
-        """
-        set the robot to normal state
-
-        :return: None
-        """
-        self.vision = True
-        self.move = True
-        self.sensor = True
-        self.weapon = True
-        self.gadget = True
-        self.alive = True
-
-    def set_dead(self):
-        """
-        set the robot to dead state
-
-        :return: None
-        """
-        self.vision = False
-        self.move = False
-        self.sensor = False
-        self.weapon = False
-        self.gadget = False
-        self.alive = False
-
-    def set_state(self, vision: bool = None, move: bool = None, sensor: bool = None, weapon: bool = None, gadget: bool = None, alive: bool = None):
-        """
-        set the robot to a given state
-
-        :param vision: whether the robot has vision
-        :param move: whether the robot can move
-        :param sensor: whether the robot can use sensors
-        :param weapon: whether the robot can use weapons
-        :param gadget: whether the robot can use gadgets
-        :param alive: whether the robot is alive
-        :return: None
-        """
-        self.vision = vision if vision is not None else self.vision
-        self.move = move if move is not None else self.move
-        self.sensor = sensor if sensor is not None else self.sensor
-        self.weapon = weapon if weapon is not None else self.weapon
-        self.gadget = gadget if gadget is not None else self.gadget
-        self.alive = alive if alive is not None else self.alive
-
-
 class Robot(IDisplayable, IDamageable):
 
     def __init__(self, robot_config: RobotConfig, player_id: int) -> None:
@@ -115,7 +50,7 @@ class Robot(IDisplayable, IDamageable):
         """
         # the id assigned to player and game
         self.player_id = player_id
-        self.state = RobotState(True, True, True, True, True, True)
+        self.states = RobotState()
 
         # extract base configuration
         self.max_HP = robot_config.HP
@@ -177,13 +112,29 @@ class Robot(IDisplayable, IDamageable):
         """
         return 'player ' + str(self.player_id)
 
-    def get_state(self) -> RobotState:
+    def get_state(self, state_type: str) -> bool:
         """
         Return the state of robot
 
-        :return: self.state
+        Preconditions:
+            - state_type in self.states ("vision", "move", "sensor", "weapon", "gadget", "alive")
+
+        :param state_type: the type of state to return
+        :return: the state corresponding to state_type
         """
-        return self.state
+        return self.states.state[state_type].state
+
+    def get_state_time(self, state_type: str) -> int:
+        """
+        Return the remaining recovery time of a state
+
+        Preconditions:
+            - state_type in self.states ("vision", "move", "sensor", "weapon", "gadget", "alive")
+
+        :param state_type: the type of state to return
+        :return: the remaining time of the state
+        """
+        return self.states.state[state_type].recovery_time
 
     def set_pos(self, grid: Grid) -> None:
         """
@@ -264,7 +215,7 @@ class Robot(IDisplayable, IDamageable):
         :return: None
         """
         # check robot state
-        if not self.get_state().vision:
+        if not self.get_state("vision"):
             self.receive_info("Robot vision is interrupted!")
             return
 
@@ -321,5 +272,5 @@ class Robot(IDisplayable, IDamageable):
         self.receive_info("Receives damage!")
 
         if self.HP <= 0:
-            self.state.set_dead()  # change robot state to dead
+            self.states.set_dead()  # change robot state to dead
             self.receive_info("Robot destroyed!")

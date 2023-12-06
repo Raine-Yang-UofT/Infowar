@@ -90,6 +90,8 @@ class Game:
             # refill robot gadgets after a certain number of rounds
             if self.round_count % game_config.GADGET_RESTORE_PERIOD == 0:
                 self.players[player_id].refill_gadgets()
+            # update robot states
+            self.players[player_id].states.update_state()
 
         # update events
         self.event_handler.execute_events(self.round_count)
