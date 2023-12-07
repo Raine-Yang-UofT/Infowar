@@ -157,6 +157,72 @@ class ProjectileGadget(interface.IGadget):
         self.remain = self.total
 
 
+@dataclass(frozen=True)
+class RepairKitConfig:
+    """
+    A gadget that can recover HP and armor
+
+            - name: the name of gadget
+            - HP: the HP recovered
+            - armor: the armor recovered
+            - reaction_time: the reaction speed of gadget (determines message priority)
+            - total_use: the total number of times the gadget can be used
+    """
+    name: str
+    HP: int
+    armor: int
+    reaction_time: int
+    total_use: int
+
+
+class RepairKit(interface.IGadget):
+    """
+    The repair kit gadget class
+    """
+    def __init__(self, config: RepairKitConfig):
+        self.config = config
+        self.remain = config.total_use
+        self.total = config.total_use
+
+    def use_gadget(self, gadgets, robot) -> None:
+        """
+        Use a repair kit
+
+        :param gadgets: the RobotGadgets observer class
+        :param robot: the robot that uses the gadget
+        :return: None
+        """
+        self.remain -= 1
+        robot.receive_info(gadgets.use_repair_kit(robot, self))
+
+    def select_gadget_parameter(self):
+        """
+        Select the direction to use the repair kit
+
+        :return: a copy of gadget object with updated parameters
+        """
+        # check remaining use
+        if not self.check_remaining_use():
+            raise input_code.InvalidCommandException("No remaining use of repair kit")
+        return self  # no additional parameters
+
+    def check_remaining_use(self) -> bool:
+        """
+        Check the remaining use of the gadget
+
+        :return: whether there is remaining gadget use
+        """
+        return self.remain > 0
+
+    def reset_remaining_use(self) -> None:
+        """
+        Reset the remaining use of the gadget
+
+        :return: None
+        """
+        self.remain = self.total
+
+
 # gadget objects
 deployable_barricade = DeployableBarricade(
     DeployableBarricadeConfig(
@@ -164,7 +230,7 @@ deployable_barricade = DeployableBarricade(
         HP=200,
         armor=5,
         reaction_time=10,
-        total_use=4
+        total_use=3
     )
 )
 
@@ -180,13 +246,46 @@ def EMP_effect(target):
 EMP_bomb = ProjectileGadget(
     ProjectileGadgetConfig(
         name='EMP bomb',
-        min_launch_range=0,
+        min_launch_range=3,
         max_launch_range=8,
         impact_radius=2,
         sound_emission=3,
         heat_emission=3,
         reaction_time=80,
-        total_use=3
+        total_use=2
     ),
     execution_function=EMP_effect
+)
+
+
+# the effects of flash bomb
+def flash_effect(target):
+    target.states.set_state("vision", False, 2)
+    target.states.set_state("sensor", False, 2)
+    target.states.set_state("weapon", False, 1)
+
+
+flash_bomb = ProjectileGadget(
+    ProjectileGadgetConfig(
+        name='flash bomb',
+        min_launch_range=4,
+        max_launch_range=6,
+        impact_radius=3,
+        sound_emission=6,
+        heat_emission=5,
+        reaction_time=80,
+        total_use=2
+    ),
+    execution_function=flash_effect
+)
+
+
+repair_kit = RepairKit(
+    RepairKitConfig(
+        name='repair kit',
+        HP=25,
+        armor=1,
+        reaction_time=10,
+        total_use=1
+    )
 )

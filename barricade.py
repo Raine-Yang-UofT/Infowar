@@ -66,7 +66,7 @@ class HardBarricade(IDisplayable, IDamageable):
         Otherwise, self.HP reduces the value of damage. The hard barricade is destroyed when
         HP is lower than 0
         """
-        if damage.penetration > self.armor:
+        if damage.penetration >= self.armor:
             self.grid.remove_occupant()  # erase the hard barricade
         else:
             self.HP -= damage.damage

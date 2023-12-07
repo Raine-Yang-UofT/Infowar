@@ -70,5 +70,5 @@ default_config = RobotConfig(
     move_speed=50,
     sensors=[sensors.heat_sensor, sensors.sound_sensor, sensors.lidar, sensors.drone, sensors.scout_car],
     weapons=[weapons.assulter_rifle, weapons.submachine_gun, weapons.pistol, weapons.sniper_rifle, weapons.shotgun, weapons.impact_grenade, weapons.frag_grenade, weapons.breaching_grenade],
-    gadgets=[gadgets.deployable_barricade, gadgets.EMP_bomb]
+    gadgets=[gadgets.deployable_barricade, gadgets.EMP_bomb, gadgets.flash_bomb, gadgets.repair_kit]
 )

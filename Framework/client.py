@@ -114,7 +114,7 @@ def select_gadget_command(net: Network):
 if __name__ == '__main__':
     # TODO check the validity of robot config
 
-    net = Network("100.71.91.212")
+    net = Network("100.71.95.209")
     net.connect(default_config)
     player = net.get_player()  # receive the initialized player robot
     print("You are player " + str(player.get_id()))

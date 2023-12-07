@@ -7,7 +7,7 @@ from Configurations.robot_config import RobotConfig
 from grid import Grid
 import Configurations.game_config as game_config
 import random
-from robot_state import RobotState, State
+from robot_state import RobotState
 
 
 def print_list_helper(lst: list[list]) -> None:
@@ -274,3 +274,21 @@ class Robot(IDisplayable, IDamageable):
         if self.HP <= 0:
             self.states.set_dead()  # change robot state to dead
             self.receive_info("Robot destroyed!")
+
+    def recovery_HP(self, HP: int) -> None:
+        """
+        Recover HP
+
+        :param HP: the amount of HP to recover
+        :return: None
+        """
+        self.HP = min(self.max_HP, self.HP + HP)
+
+    def recovery_armor(self, armor: int) -> None:
+        """
+        Recover armor
+
+        :param armor: the amount of armor to recover
+        :return: None
+        """
+        self.armor = min(self.armor_equip.max_armor, self.armor + armor)

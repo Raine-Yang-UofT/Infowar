@@ -77,3 +77,16 @@ class RobotGadgets:
                         gadget.execution_function(occupant)
 
         return targets
+
+    def use_repair_kit(self, robot, gadget: gadgets.RepairKit) -> str:
+        """
+        Repair the robot
+
+        :param robot: the robot to repair
+        :param gadget: the repair kit to use
+        :return: result on using
+        """
+        robot.recovery_HP(gadget.config.HP)
+        robot.recovery_armor(gadget.config.armor)
+        return "Repair kit used!"
+
