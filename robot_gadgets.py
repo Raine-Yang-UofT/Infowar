@@ -14,9 +14,9 @@ class RobotGadgets:
         self.battlefield = game.battlefield
         self.event_handler = game.event_handler
 
-    def deploy_barricade(self, x: int, y: int, gadget: gadgets.DeployableBarricade) -> str:
+    def deploy_gadget(self, x: int, y: int, gadget: gadgets.DeployableGadget) -> str:
         """
-        Deploy a hard barricade at a certain direction from (x, y)
+        Deploy a deployable gadget at a certain direction from (x, y)
 
         :param x: the x-coordinate of the deployment point
         :param y: the y-coordinate of the deployment point
@@ -33,13 +33,7 @@ class RobotGadgets:
         elif gadget.direction == message.RIGHT:
             px += 1
 
-        if self.battlefield.is_blocked(px, py):
-            return 'Deployment failed: the location has been blocked'
-
-        grid = self.battlefield.get_grid(px, py)
-        grid.change_occupant(barricade.HardBarricade(gadget.config.HP, gadget.config.armor, grid))
-
-        return f'Deploy barricade at ({px}, {py})'
+        return gadget.config.execution_function(gadget, self.battlefield, px, py)
 
     def throw_projectile_gadget(self, x: int, y: int, gadget: gadgets.ProjectileGadget) -> []:
         """

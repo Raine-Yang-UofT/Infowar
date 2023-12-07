@@ -207,6 +207,17 @@ class Robot(IDisplayable, IDamageable):
                     if robot_vision[i][j] == 'R' and (j, i) != self.grid.get_pos():
                         self.map[i][j] = '_'
 
+    def update_location_on_map(self, x: int, y: int, mark: str) -> None:
+        """
+        Update the display of a single grid location on the map
+
+        :param x: the x-coordinate of the grid
+        :param y: the y-coordinate of the grid
+        :param mark: the mark to display on the map
+        :return: None
+        """
+        self.map[y][x] = mark
+
     def update_vision(self, robot_vision: list[list[str]]) -> None:
         """
         Update the player's vision

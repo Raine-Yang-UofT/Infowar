@@ -5,31 +5,35 @@ from dataclasses import dataclass
 from Framework import interface
 from Framework import input_code
 from Items import prompt_template as prompt
+import damage as dmg
+
+
+"""
+Gadget Type 1: deployable gadgets
+"""
 
 
 @dataclass(frozen=True)
-class DeployableBarricadeConfig:
+class DeployableGadgetConfig:
     """
-    A hard barricade that can be deployed on the ground. It can block straight-firing weapons and robots
+    A gadget that can be deployed on the field.
 
         - name: the name of the gadget
-        - HP: the HP of the gadget
-        - armor: the armor of the gadget
         - reaction_time: the reaction speed of gadget (determines message priority)
         - total_use: the total number of times the gadget can be used
+        - execution_function: the function to execute the gadget
     """
     name: str
-    HP: int
-    armor: int
     reaction_time: int
     total_use: int
+    execution_function: callable
 
 
-class DeployableBarricade(interface.IGadget):
+class DeployableGadget(interface.IGadget):
     """
-    The deployable barricade gadget class
+    The deployable gadget class
     """
-    def __init__(self, config: DeployableBarricadeConfig):
+    def __init__(self, config: DeployableGadgetConfig):
         self.config = config
         self.remain = config.total_use
         self.total = config.total_use
@@ -37,25 +41,25 @@ class DeployableBarricade(interface.IGadget):
 
     def use_gadget(self, gadgets, robot) -> None:
         """
-        Deploy a hard barricade at the current position of the robot
+        Deploy a land mine at the current position of the robot
 
         :param gadgets: the RobotGadgets observer class
         :param robot: the robot that uses the gadget
         :return: None
         """
         self.remain -= 1
-        robot.receive_info(gadgets.deploy_barricade(robot.get_pos()[0], robot.get_pos()[1], self))
+        robot.receive_info(gadgets.deploy_gadget(robot.get_pos()[0], robot.get_pos()[1], self))
 
     def select_gadget_parameter(self):
         """
-        Select the direction to deploy the barricade
+        Select the direction to deploy the gadget
 
         :return: a copy of gadget object with updated parameters
         """
         # check remaining use
         if not self.check_remaining_use():
-            raise input_code.InvalidCommandException("No remaining use of deployable barricade")
-        return prompt.select_direction(self, "Select the direction to deploy barricade:")
+            raise input_code.InvalidCommandException(f"No remaining use of {self.config.name}")
+        return prompt.select_direction(self, f"Select the direction to deploy {self.config.name}:")
 
     def check_remaining_use(self) -> bool:
         """
@@ -74,6 +78,24 @@ class DeployableBarricade(interface.IGadget):
         self.remain = self.total
 
 
+# additional configurations for deployable barricade
+@dataclass(frozen=True)
+class DeployableBarricadeConfig(DeployableGadgetConfig):
+    """
+    A hard barricade that can be deployed on the ground. It can block straight-firing weapons and robots
+
+        - HP: the HP of the gadget
+        - armor: the armor of the gadget
+    """
+    HP: int
+    armor: int
+
+
+"""
+Gadget Type 2: projectile gadgets
+"""
+
+
 @dataclass(frozen=True)
 class ProjectileGadgetConfig:
     """
@@ -87,6 +109,7 @@ class ProjectileGadgetConfig:
         - heat_emission: the heat emission of the gadget
         - reaction_time: the reaction speed of gadget (determines message priority)
         - total_use: the total number of times the gadget can be used
+        - execution_function: the function to execute the gadget
     """
     name: str
     min_launch_range: int
@@ -96,6 +119,7 @@ class ProjectileGadgetConfig:
     heat_emission: int
     reaction_time: int
     total_use: int
+    execution_function: callable
 
 
 class ProjectileGadget(interface.IGadget):
@@ -104,13 +128,12 @@ class ProjectileGadget(interface.IGadget):
     Projectile gadgets can be thrown to a certain location and causes certain effect
 
     :param config: the configuration of the gadget
-    :param execution_function: the function to execute the gadget
     """
-    def __init__(self, config: ProjectileGadgetConfig, execution_function):
+    def __init__(self, config: ProjectileGadgetConfig):
         self.config = config
         self.remain = config.total_use
         self.total = config.total_use
-        self.execution_function = execution_function
+        self.execution_function = config.execution_function
         self.direction = -1
         self.range = -1
 
@@ -155,6 +178,11 @@ class ProjectileGadget(interface.IGadget):
         :return: None
         """
         self.remain = self.total
+
+
+"""
+Other gadgets
+"""
 
 
 @dataclass(frozen=True)
@@ -223,14 +251,31 @@ class RepairKit(interface.IGadget):
         self.remain = self.total
 
 
+"""
+gadget objects
+"""
+
+
+def deployable_barricade_effect(gadget, battlefield, x, y):
+    if battlefield.is_blocked(x, y):
+        return 'Deployment failed: the location has been blocked'
+
+    grid = battlefield.get_grid(x, y)
+    import barricade
+    grid.change_occupant(barricade.HardBarricade(gadget.config.HP, gadget.config.armor, grid))
+
+    return f'Deploy barricade at ({x}, {y})'
+
+
 # gadget objects
-deployable_barricade = DeployableBarricade(
+deployable_barricade = DeployableGadget(
     DeployableBarricadeConfig(
         name='deployable barricade',
         HP=200,
         armor=5,
         reaction_time=10,
-        total_use=3
+        total_use=3,
+        execution_function=deployable_barricade_effect
     )
 )
 
@@ -252,9 +297,9 @@ EMP_bomb = ProjectileGadget(
         sound_emission=3,
         heat_emission=3,
         reaction_time=80,
-        total_use=2
+        total_use=2,
+        execution_function=EMP_effect
     ),
-    execution_function=EMP_effect
 )
 
 
@@ -274,9 +319,9 @@ flash_bomb = ProjectileGadget(
         sound_emission=6,
         heat_emission=5,
         reaction_time=80,
-        total_use=2
+        total_use=2,
+        execution_function=flash_effect
     ),
-    execution_function=flash_effect
 )
 
 
